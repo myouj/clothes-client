@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8" />
+		<title>烟雨阁服装城</title>
+		<link rel="stylesheet" type="text/css" href="easyui/themes/default/easyui.css" />
+		<link rel="stylesheet" type="text/css" href="easyui/themes/icon.css">
+		<script type="text/javascript" src="easyui/jquery.min.js"></script>
+		<script type="text/javascript" src="easyui/jquery.easyui.min.js"></script>
+		
+
+	</head>
+
+	<body class="easyui-layout">
+		<div data-options="region:'north',split:true" style="height:100px;">
+
+		</div>
+		<div data-options="region:'west',title:'菜单',split:true" style="width:200px;">
+			<div id="mune" class="easyui-accordion">
+				<div title="仓库管理" data-options="iconCls:'icon-save'" style="overflow:auto;">
+					<ul id="dopet_1">
+						<p><a href="#" onclick="open_depot()">仓库信息</a></p>
+					</ul>
+					<ul id="dopet_2">
+						<p><a href="#" onclick="open_depot_manger()">库存信息</a></p>
+					</ul>
+					<ul id="dopet_3">
+						<p><a href="#" onclick="open_depot_manger()">商品调拨</a></p>
+					</ul>
+					<ul id="dopet_4">
+						<p><a href="#" onclick="open_depot_manger()">警报查询</a></p>
+					</ul>
+				</div>
+				<div title="Title2" data-options="iconCls:'icon-reload'">
+					content2
+				</div>
+				<div title="Title3" data-options="iconCls:'icon-man'">
+					content3
+				</div>
+			</div>
+		</div>
+		<div data-options="region:'center'" style="padding:5px;background:#eee;">
+			<div id="tt" class="easyui-tabs" style="height: 100%;width: auto;">
+				<div title="欢迎" data-options="closable:true" 
+					style="padding:20px;display:none;">
+					欢迎来到烟雨阁服装城管理系统
+				</div>
+				
+			</div>
+		</div>
+
+	</body>
+
+</html>
+<script>
+	function open_depot(){
+		if($("#tt").tabs('exists', '仓库信息')){
+			$("#tt").tabs('select', '仓库信息');
+			
+		}else{
+			$("#tt").tabs('add',{
+				title: '仓库信息',
+				content: '<iframe src="pages/depot/depot.html" style="border: hidden;height:100%;width:100%"></iframe>',
+				closable: true
+				
+			});
+		}
+		
+		
+	}
+	
+	function open_depot_manger(){
+		if($("#tt").tabs('exists', '仓库管理')){
+			$("#tt").tabs('select', '仓库管理');
+		}else{
+			$("#tt").tabs('add',{
+				title: '仓库管理',
+				content: '<iframe src="pages/depot/depot_manager.html" style="border: hidden;height:100%;width:100%"></iframe>',
+				closable: true
+			});
+		}
+		
+	}
+	
+	
+</script>
