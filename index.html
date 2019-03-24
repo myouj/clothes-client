@@ -6,83 +6,126 @@
 		<title>烟雨阁服装城</title>
 		<link rel="stylesheet" type="text/css" href="easyui/themes/default/easyui.css" />
 		<link rel="stylesheet" type="text/css" href="easyui/themes/icon.css">
+		<link rel="stylesheet" type="text/css" href="bootstrap-3.3.7-dist/css/bootstrap-theme.min.css" />
 		<script type="text/javascript" src="easyui/jquery.min.js"></script>
 		<script type="text/javascript" src="easyui/jquery.easyui.min.js"></script>
+		<script type="text/javascript" src="bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
 		<script type="text/javascript" src="js/mune.js"></script>
 
 	</head>
 
 	<body class="easyui-layout">
-		<div data-options="region:'north',split:true" style="height:100px;">
-
+		<div data-options="region:'north'" style="height:100px;width: 100%;">
+			<div style="position: absolute;height: 100%;width: 100%;">
+				<div style="float: left;">
+				<span ><h1>烟雨阁服装城管理系统</h1></span>
+				
+				</div>
+				<div style="float: right;width: 200px;height:100px;text-align: center;line-height: 100px;">
+				<span text-align: center;>你好，<span id="head_name"></span>&nbsp&nbsp&nbsp&nbsp
+				<a href="#" onclick="getSession()">退出</a></span>
+			</div>
+			</div>
+			
 		</div>
-		<div data-options="region:'west',title:'菜单',split:true" style="width:200px;">
+		<div data-options="region:'west',title:'菜单'" style="width:200px;">
 			<div id="mune" class="easyui-accordion">
 				<div title="仓库管理" data-options="iconCls:'icon-save'" style="overflow:auto;">
 					<ul id="dopet_1">
-						<p><a href="#" onclick="open_depot()">仓库管理</a></p>
+						<p>
+							<a href="#" onclick="open_depot()">仓库管理</a>
+						</p>
 					</ul>
 					<ul id="dopet_2">
-						<p><a href="#" onclick="open_depot_manger()">库存信息</a></p>
+						<p>
+							<a href="#" onclick="open_depot_manger()">库存信息</a>
+						</p>
 					</ul>
 					<ul id="dopet_3">
-						<p><a href="#" onclick="open_goods_move()">商品调拨</a></p>
+						<p>
+							<a href="#" onclick="open_goods_move()">商品调拨</a>
+						</p>
 					</ul>
 					<ul id="dopet_4">
-						<p><a href="#" onclick="open_warning()">警报查询</a></p>
+						<p>
+							<a href="#" onclick="open_warning()">警报查询</a>
+						</p>
 					</ul>
 				</div>
 				<div title="进货管理" data-options="iconCls:'icon-reload'">
 					<ul id="supplies_1">
-						<p><a href="#" onclick="open_procurement()">采购入库</a></p>
+						<p>
+							<a href="#" onclick="open_procurement()">采购入库</a>
+						</p>
 					</ul>
 					<ul id="supplies_2">
-						<p><a href="#" onclick="open_return()">采购退货</a></p>
+						<p>
+							<a href="#" onclick="open_return()">采购退货</a>
+						</p>
 					</ul>
 					<ul id="supplies_3">
-						<p><a href="#" onclick="open_account()">往来账务</a></p>
+						<p>
+							<a href="#" onclick="open_account()">往来账务</a>
+						</p>
 					</ul>
 				</div>
 				<div title="业务管理" data-options="iconCls:'icon-man'">
 					<ul id="business_1">
-						<p><a href="#" onclick="open_goods_business()">商品业务</a></p>
+						<p>
+							<a href="#" onclick="open_goods_business()">商品业务</a>
+						</p>
 					</ul>
 					<ul id="business_2">
-						<p><a href="#" onclick="open_customer_return()">顾客退货</a></p>
+						<p>
+							<a href="#" onclick="open_customer_return()">顾客退货</a>
+						</p>
 					</ul>
 					<ul id="business_3">
-						<p><a href="#" onclick="open_customer_account()">往来账务</a></p>
+						<p>
+							<a href="#" onclick="open_customer_account()">往来账务</a>
+						</p>
 					</ul>
 				</div>
 				<div title="日常管理" data-options="iconCls:'icon-blank'">
 					<ul id="daily_1">
-						<p><a href="#" onclick="open_supplier()">供货商管理</a></p>
+						<p>
+							<a href="#" onclick="open_supplier()">供货商管理</a>
+						</p>
 					</ul>
 					<ul id="daily_2">
-						<p><a href="#" onclick="open_customer()">顾客管理</a></p>
+						<p>
+							<a href="#" onclick="open_customer()">顾客管理</a>
+						</p>
 					</ul>
 					<ul id="daily_3">
-						<p><a href="#" onclick="open_salesman()">业务员管理</a></p>
+						<p>
+							<a href="#" onclick="open_salesman()">业务员管理</a>
+						</p>
 					</ul>
 					<ul id="daily_4">
-						<p><a href="#" onclick="open_bad_debt()">客户坏账</a></p>
+						<p>
+							<a href="#" onclick="open_bad_debt()">客户坏账</a>
+						</p>
 					</ul>
 					<ul id="daily_5">
-						<p><a href="#" onclick="open_contract()">合同管理</a></p>
+						<p>
+							<a href="#" onclick="open_contract()">合同管理</a>
+						</p>
 					</ul>
 					<ul id="daily_6">
-						<p><a href="#" onclick="open_goods()">商品信息</a></p>
+						<p>
+							<a href="#" onclick="open_goods()">商品信息</a>
+						</p>
 					</ul>
 				</div>
 			</div>
 		</div>
 		<div data-options="region:'center'" style="padding:5px;background:#eee;">
 			<div id="tt" class="easyui-tabs" style="height: 100%;width: auto;">
-				<div title="欢迎" data-options="closable:true" 
-					style="padding:20px;display:none;">
+				<div title="欢迎" data-options="closable:true" style="padding:20px;display:none;">
 					欢迎来到烟雨阁服装城管理系统
 				</div>
-				
+
 			</div>
 		</div>
 
@@ -90,7 +133,28 @@
 
 </html>
 <script>
+	var manager_name;
+	var manager_id;
 	
+	$(function(){
+		getSession();
+	});
 	
+	function getSession(){
+		$.ajax({
+			type:"get",
+			url:"http://localhost:8001/manager/getSession",
+			xhrFields: {withCredentials:true},
+			success: function(data){
+				if(data.code == 4){
+					manager_id = data.data.id;
+					manager_name = data.data.name;
+					$("#head_name").text(manager_name);
+				}else{
+					top.location.href="login.html";
+				}
+			}
+		});
+	}
 	
 </script>

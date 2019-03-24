@@ -39,8 +39,9 @@
 		
 		$.ajax({
 			type:"post",
-			url:"http://localhost:8001/user/login",
+			url:"http://localhost:8001/manager/login",
 			dataType: "json",
+			xhrFields: {withCredentials:true},
 			data: ({
 				'username': username,
 				'password': password
@@ -59,7 +60,7 @@
 					$("#tip_user").empty().append('<span class="error_input">出现异常，请联系管理员！</span>').show();
 					return;
 				}else if(data.code == 3){
-					alert("login success");
+					alert(data.message);
 					top.location.href="index.html";
 				}
 				
