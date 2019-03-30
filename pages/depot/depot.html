@@ -1,11 +1,228 @@
 <!DOCTYPE html>
 <html>
+
 	<head>
 		<meta charset="UTF-8">
+		
 		<title></title>
+		<link rel="stylesheet" type="text/css" href="../../easyui/themes/default/easyui.css" />
+		<link rel="stylesheet" type="text/css" href="../../easyui/themes/icon.css">
+		<link rel="stylesheet" type="text/css" href="../../css/common.css">
+		<script type="text/javascript" src="../../easyui/jquery.min.js"></script>
+		<script type="text/javascript" src="../../easyui/jquery.easyui.min.js"></script>
+	<script type="text/javascript">
+		
+	var pages;
+	var curr_page;
+	var total;
+	
+	$(function(){
+		
+		initTableData();
+//		ininPager;
+	});
+	
+	//防止表单重复提交
+	function initForm(){
+		$('#depotFM').form({
+			onSubmit: function(){
+				return false;
+			}
+		});
+	}
+	
+	//初始化表格
+	function initTableData(){
+		$('#tableData').datagrid({
+			url: 'http://127.0.0.1:8001/depot/getDepotList',
+			method: 'get',
+            columns: [[
+                {field: 'id', width: 35, align: "center", checkbox: true},
+                {
+                    title: '操作', field: 'op', align: "center", width: 60,
+                    formatter: function () {
+                        var str = '';
+                        str += '<img title="编辑" src="../../easyui/themes/icons/pencil.png" style="cursor: pointer;" onclick="editDepot();"/>&nbsp;&nbsp;&nbsp;';
+                        str += '<img title="删除" src="../../easyui/themes/icons/edit_remove.png" style="cursor: pointer;" onclick="deleteDepot();"/>';
+                        return str;
+                    }
+                },
+                {title: '仓库编号', field: 'num', width: 200},
+                {title: '仓库地址', field: 'address', width: 200},
+                {title: '容量', field: 'capacity', width: 60},
+                {title: '当前数量', field: 'currCount', width: 60},
+                {title: '负责人', field: 'manager', width: 60},
+                {title: '电话', field: 'managerTel', width: 60},
+                {title: '描述', field: 'remark', width: 120}
+            ]],
+            toolbar: [
+                {
+                    id: 'addDepot',
+                    text: '增加',
+                    iconCls: 'icon-add',
+                    handler: function () {
+//                      addDepot();
+                    }
+                },
+                {
+                    id: 'deleteDepot',
+                    text: '删除',
+                    iconCls: 'icon-remove',
+                    handler: function () {
+//                      batDeleteDepot();
+                    }
+                }
+            ],
+            pagination: true,
+            pageSize: 10,
+            pageList: [5,10,20],
+            onLoadError: function () {
+                $.messager.alert('页面加载提示', '页面加载异常，请稍后再试！', 'error');
+                return;
+            }
+			
+		});
+//		showDepotDetails(1,10);
+	}
+	
+	function showDepotDetails(pageNo, pageSize) {
+        var num = $.trim($("#search_num").val());
+        var address = $.trim($("#search_address").val());
+        $.ajax({
+            type: "get",
+            url: "http://127.0.0.1:8001/depot/getDepotList",
+            xhrFields: {withCredentials:true},
+            dataType: "json",
+            data: ({
+                num: num,
+                address: address,
+                currentPage: pageNo,
+                pageSize: pageSize
+            }),
+            success: function (data) {
+                if(data.code === 200){
+                    $("#tableData").datagrid('loadData', data.data.records);
+                    pages = data.data.pages;
+					curr_page = data.data.current;
+					total = data.data.total;
+                }
+            },
+            //此处添加错误处理
+            error: function () {
+                $.messager.alert('查询提示', '查询数据后台异常，请稍后再试！', 'error');
+                return;
+            }
+        });
+    }
+	
+	//分页信息处理
+    function ininPager() {
+        try {
+            var opts = $("#tableData").datagrid('options');
+            var pager = $("#tableData").datagrid('getPager');
+            pager.pagination({
+                onSelectPage: function (pageNum, pageSize) {
+                	alert(1);
+                    opts.pageNumber = pageNum;
+                    opts.pageSize = pageSize;
+                    pager.pagination('refresh', {
+                        pageNumber: pageNum,
+                        pageSize: pageSize
+                    });
+                    showDepotDetails(pageNum, pageSize);
+                }
+            });
+        }
+        catch (e) {
+            $.messager.alert('异常处理提示', "分页信息异常 :  " + e.name + ": " + e.message, 'error');
+        }
+    }
+</script>
 	</head>
+
 	<body>
-		wo<br />
-		wo<br />wo<br />wo<br />wo<br />wo<br />wo<br />wo<br />wo<br />wo<br />wo<br />wo<br />wo<br />
+		<div id="searchPanel" class="easyui-panel" style="padding: 10px;" title="查询窗口" iconCls="icon-search" collapsible="true" closable="false">
+			<table id="searchTable">
+				<tr>
+					<td>仓库编号：</td>
+					<td>
+						<input type="text" name="search_num" id="search_num" style="width: 100px;" />
+					</td>
+					<td>&nbsp;</td>
+					<td id="searchRemarkLabel">描述：</td>
+					<td>
+						<input type="text" name="search_address" id="search_address" style="width: 100px;" />
+					</td>
+					<td>
+						<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-search" id="searchBtn">查询</a>
+						<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-redo" id="resetBtn">重置</a>
+					</td>
+				</tr>
+			</table>
+		</div>
+		
+		<div id="tablePanel" class="easyui-panel" style="padding: 1px;top: 300px;" title="仓库列表" 
+			iconCls="icon-list" collapsible="true" closable="false">
+			<table id="tableData" style="top: 300px;border-bottom-color: #FFFFFF;"></table>
+		</div>
+		
+		<div id="depotDlg" class="easyui-dialog" style="width: 380px;padding: 10px 20px;"
+			closed="true" buttons="#dlg-buttons" modal="true" cache="false" collapsible="false" closable="true">
+			<form id="depotFM" method="post" novalidate="novalidate">
+				<table>
+					<tr>
+						<td>仓库编号</td>
+						<td style="padding: 5px;	">
+							<input name="num" id="num" class="easyui-validatebox" data-options="required:true, validType:'length[5,10]'"
+								style="width: 230px; height: 20px;" />
+						</td>
+					</tr>
+					<tr>
+						<td>地址</td>
+						<td style="padding: 5px;	">
+							<input name="address" id="address" class="easyui-validatebox" data-options="validType:'length[2,30]'"
+								style="width: 230px; height: 20px;" />
+						</td>
+					</tr>
+					<tr>
+						<td>容量</td>
+						<td style="padding: 5px;	">
+							<input name="capacity" id="capacity" class="easyui-numberbox" data-options="min:0"
+								style="width: 230px; height: 20px;" />
+						</td>
+					</tr>
+					<tr>
+						<td>负责人</td>
+						<td style="padding: 5px;	">
+							<input name="manager" id="manager"
+								style="width: 230px; height: 20px;" />
+							<input name="manager_id" id="manager_id" type="hidden" />
+						</td>
+						
+					</tr>
+					<tr>
+						<td>负责人电话</td>
+						<td style="padding: 5px;	">
+							<input name="manager_tel" id="manager_tel" 
+								style="width: 230px; height: 20px;" />
+						</td>
+					</tr>
+					<tr>
+						<td>描述</td>
+						<td style="padding: 5px;	">
+							<textarea name="remark" id="remark" rows="2" cols="2"
+								style="width: 230px;" />
+						</td>
+					</tr>
+				</table>
+			</form>
+		</div>
+		<div id="dlg-buttons">
+			<a href="javascript:void(0)" id="saveDepot" class="easyui-linkbutton" iconCls="icon-ok">保存</a>
+			<a href="javascript:void(0)" id="cancelDepot" class="easyui-linkbutton" iconCls="icon-cancel"
+				onclick="javascript:$('#depotDlg').dialog('close')">取消</a>
+		</div>
+		
 	</body>
+
 </html>
