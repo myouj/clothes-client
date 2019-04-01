@@ -11,6 +11,9 @@
 		<script type="text/javascript" src="../../easyui/jquery.min.js"></script>
 		<script type="text/javascript" src="../../easyui/jquery.easyui.min.js"></script>
 		<script type="text/javascript">
+			/*
+			 * 初始化页面
+			 */
 			$(function() {
 
 				initTableData();
@@ -118,11 +121,12 @@
 
 			}
 			
+			//打开表单
 			function editDepot(id){
 				$('#depotDlg').dialog('open').dialog('setTitle', '<img src="../../easyui/themes/icons/pencil.png"/>&nbsp;编辑仓库信息');
 				getDepot(id);
 			}
-			
+			//通过id请求数据，渲染表单
 			function getDepot(id){
 				$.ajax({
 					type:"get",
@@ -149,6 +153,7 @@
 				});
 			}
 			
+			//删除对应的信息
 			function deleteDepot(id){
 				$.messager.confirm('删除确认', '确定要删除该信息吗？', function(r){
 					if(r){
@@ -176,6 +181,7 @@
 				})
 			}
 
+			//打开表单 ，进行添加数据
 			function addDepot() {
 				$("#depotDlg").dialog('open').dialog('setTitle', '<img src="../../easyui/themes/icons/edit_add.png"/>&nbsp;增加仓库信息');
 				getNewNum();
@@ -184,7 +190,7 @@
 			}
 			
 			
-				
+			//表单保存
 			function saveDepot(){
 				var id = $("#id").val();
 				var num = $('#num').val();
@@ -229,6 +235,7 @@
 				});
 			}
 			
+			//关闭表单，清空表单内的数据
 			function cancelDepot(){
 				$('#depotDlg').dialog('close');
 				$('#address').val("");
@@ -240,6 +247,7 @@
 				$('#id').val("");
 			}
 			
+			//获取新的单号
 			function getNewNum(){
 				$.ajax({
 					type:"get",
@@ -251,6 +259,7 @@
 				});
 			}
 
+			//条件查询
 			function search_depot() {
 				var num = $("#search_num").val();
 				var address = $("#search_address").val();
@@ -259,12 +268,14 @@
 					address: address
 				});
 			}
-
+			
+			//清空条件输入框
 			function reset() {
 				$("#search_num").val("");
 				$("#search_address").val("");
 			}
 			
+			//批量删除
 			function batDeleteDepot(){
 				var row = $('#tableData').datagrid('getChecked');
 				if(row.length == 0){
