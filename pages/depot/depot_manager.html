@@ -3,8 +3,110 @@
 	<head>
 		<meta charset="UTF-8">
 		<title></title>
+		<link rel="stylesheet" type="text/css" href="../../easyui/themes/default/easyui.css" />
+		<link rel="stylesheet" type="text/css" href="../../easyui/themes/icon.css">
+		<link rel="stylesheet" type="text/css" href="../../css/common.css">
+		<script type="text/javascript" src="../../easyui/jquery.min.js"></script>
+		<script type="text/javascript" src="../../easyui/jquery.easyui.min.js"></script>
+		<script>
+			$(function(){
+				initTableData();
+			});
+			
+			function initTableData(){
+				$('#tableData').datagrid({
+					url: 'http://localhost:8001/depot-goods/getDepotGoodsList',
+					method: 'get',
+					checkOnSelect: false,
+					singleSelect: false,
+					columns: [
+						[	
+							{
+								title: '仓库编号',
+								field: 'depotNum',
+								width: 70
+							},
+							{
+								title: '商品名',
+								field: 'goodsName',
+								width: 150
+							},
+							{
+								title: '商品编号',
+								field: 'goodsNum',
+								width: 70
+							},
+							{
+								title: '当前数量',
+								field: 'count',
+								width: 80
+							},
+							{
+								title: '描述',
+								field: 'remark',
+								width: 800
+							}
+						]
+					],
+					pagination: true,
+					pageSize: 10,
+					pageList: [5, 10, 20],
+					onLoadError: function() {
+						$.messager.alert('页面加载提示', '输入错误或系统错误，页面加载异常', 'error');
+						return;
+					}
+
+				});
+			}
+			
+			
+			//条件查询
+			function search_1() {
+				var depot_num = $("#depot_num").val();
+				var goods_num = $("#goods_num").val();
+				var goods_name = $("#goods_name").val();
+				$("#tableData").datagrid('load', {
+					depotNum: depot_num,
+					goodsNum: goods_num,
+					goodsName: goods_name
+				});
+			}
+			
+			//清空条件输入框
+			function reset() {
+				var depot_num = $("#depot_num").val("");
+				var goods_num = $("#goods_num").val("");
+				var goods_name = $("#goods_name").val("");
+			}
+		</script>
 	</head>
 	<body>
-		(c) Copyright 2019 youj. All Rights Reserved. 
+		<div id="searchPanel" class="easyui-panel" style="padding: 10px;" title="查询窗口" iconCls="icon-search" collapsible="true" closable="false">
+			<table id="searchTable">
+				<tr>
+					<td>仓库编号：</td>
+					<td>
+						<input type="text" name="depot_num" id="depot_num" style="width: 100px;" />
+					</td>
+					<td>&nbsp;</td>
+					<td>商品编号：</td>
+					<td>
+						<input type="text" name="goods_num" id="goods_num" style="width: 100px;" />
+					</td>
+					<td>商品名：</td>
+					<td>
+						<input type="text" name="goods_name" id="goods_name" style="width: 100px;" />
+					</td>
+					<td>
+						<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-search" id="searchBtn" onclick="search_1()">查询</a>
+						<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-redo" id="resetBtn" onclick="reset()">重置</a>
+					</td>
+				</tr>
+			</table>
+		</div>
+		
+		<div id="tablePanel" class="easyui-panel" style="padding: 1px;top: 300px;" title="库存列表" iconCls="icon-list" collapsible="true" closable="false">
+			<table id="tableData" style="top: 300px;border-bottom-color: #FFFFFF;"></table>
+		</div>
 	</body>
 </html>
