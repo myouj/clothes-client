@@ -3,8 +3,55 @@
 	<head>
 		<meta charset="UTF-8">
 		<title></title>
+		<link rel="stylesheet" type="text/css" href="../../easyui/themes/default/easyui.css" />
+		<link rel="stylesheet" type="text/css" href="../../easyui/themes/icon.css">
+		<link rel="stylesheet" type="text/css" href="../../css/common.css">
+		<script type="text/javascript" src="../../easyui/jquery.min.js"></script>
+		<script type="text/javascript" src="../../easyui/jquery.easyui.min.js"></script>
+		<script type="text/javascript" src="../../js/My97DatePicker/WdatePicker.js"></script>
 	</head>
 	<body>
-		商品调拨
+		<div id="searchPanel" class="easyui-panel" style="padding:3px;" title="查询窗口" iconCls="icon-search" collapsible="true"
+     closable="false">
+    <table id="searchTable">
+        <tr>
+            <td>单据编号：</td>
+            <td>
+                <input type="text" name="searchNumber" id="searchNumber" style="width:100px;"/>
+            </td>
+            <td>商品信息：</td>
+            <td>
+                <input type="text" name="searchMaterial" id="searchMaterial" placeholder="名称，型号" style="width:100px;"/>
+            </td>
+            <td>单据日期：</td>
+            <td>
+                <input type="text" name="searchBeginTime" id="searchBeginTime"
+                       onClick="WdatePicker({dateFmt:'yyyy-MM-dd'})" class="txt Wdate" 
+                       style="width:100px;"/>
+                <!--<input class="easyui-datetimebox" name="searchBeginTime"     
+        data-options="required:true,showSeconds:false" style="width:150px">  -->
+                
+            </td>
+            <td>-</td>
+            <td>
+                <input type="text" name="searchEndTime" id="searchEndTime" onClick="WdatePicker({dateFmt:'yyyy-MM-dd'})"
+                       class="txt Wdate" style="width:100px;"/>
+                <!--<input class="easyui-datetimebox" name="searchEndTime"     
+        data-options="required:true,showSeconds:false" style="width:150px">-->
+            </td>
+            <td>&nbsp;</td>
+            <td>
+                <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-search" id="searchBtn">查询</a>&nbsp;
+                <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-redo" id="searchResetBtn">重置</a>
+            </td>
+        </tr>
+    </table>
+</div>
+<!-- 数据显示table -->
+<div id="tablePanel" class="easyui-panel" style="padding:1px;top:300px;" title="调拨出库列表" iconCls="icon-list"
+     collapsible="true" closable="false">
+    <table id="tableData" style="top:300px;border-bottom-color:#FFFFFF"></table>
+</div>
+
 	</body>
 </html>
