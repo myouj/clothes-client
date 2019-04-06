@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 	<head>
 		<meta charset="UTF-8">
 		<title></title>
@@ -9,129 +10,303 @@
 		<script type="text/javascript" src="../../easyui/jquery.min.js"></script>
 		<script type="text/javascript" src="../../easyui/jquery.easyui.min.js"></script>
 		<script type="text/javascript" src="../../js/My97DatePicker/WdatePicker.js"></script>
+		<script>
+			$(function() {
+				initTableData();
+				initGoodsTB();
+			});
+
+			//初始化表格
+			function initTableData() {
+				$('#tableData').datagrid({
+					url: '',
+					method: 'get',
+					checkOnSelect: false,
+					singleSelect: false,
+					columns: [
+						[{
+								field: 'id',
+								width: 35,
+								align: "center",
+								checkbox: true
+							},
+							{
+								title: '操作',
+								field: 'op',
+								align: "center",
+								width: 60,
+								formatter: function(value, data) {
+									var str = '';
+									str += '<img title="详细" src="../../easyui/themes/icons/pencil.png" style="cursor: pointer;" onclick="editDepot(\'' + data.id + '\');';
+									return str;
+								}
+							},
+							{
+								title: '单号',
+								field: 'num',
+								width: 70
+							},
+							{
+								title: '存货仓库',
+								field: 'address',
+								width: 300
+							},
+							{
+								title: '目标仓库',
+								field: 'capacity',
+								width: 80
+							},
+							{
+								title: '商品信息',
+								field: 'currCount',
+								width: 80
+							},
+							{
+								title: '总数量',
+								field: 'manager',
+								width: 80
+							},
+							{
+								title: '时间',
+								field: 'managerTel',
+								width: 100
+							},
+							{
+								title: '详细',
+								field: 'remark',
+								width: 800
+							}
+						]
+					],
+					toolbar: [{
+							id: 'addDepot',
+							text: '增加',
+							iconCls: 'icon-add',
+							handler: function() {
+								$("#depotHeadDlg").dialog('open').dialog('setTitle', '<img src="../../easyui/themes/icons/edit_add.png"/>&nbsp;商品调拨信息');
+								initGoodsTB();
+							}
+						},
+						{
+							id: 'deleteDepot',
+							text: '删除',
+							iconCls: 'icon-remove',
+							handler: function() {
+
+							}
+						}
+					],
+					pagination: true,
+					pageSize: 10,
+					pageList: [5, 10, 20],
+					onLoadError: function() {
+						$.messager.alert('页面加载提示', '输入错误或系统错误，页面加载异常', 'error');
+						return;
+					}
+
+				});
+
+			}
+
+			function initGoodsTB() {
+				$("#materialData").datagrid({
+					height: 245,
+					rownumbers: true,
+					//动画效果
+					animate: false,
+					//选中单行
+					singleSelect: true,
+					collapsible: false,
+					selectOnCheck: false,
+					pagination: false,
+					//交替出现背景
+					striped: true,
+					showFooter: true,
+					//					onClickRow: onClickRow,
+					toolbar: [{
+							id: 'addDepot',
+							text: '增加',
+							iconCls: 'icon-add',
+							handler: function() {
+								$("#depotHeadDlg").dialog('open').dialog('setTitle', '<img src="../../easyui/themes/icons/edit_add.png"/>&nbsp;商品调拨信息');
+								initGoodsTB();
+							}
+						},
+						{
+							id: 'deleteDepot',
+							text: '删除',
+							iconCls: 'icon-remove',
+							handler: function() {
+
+							}
+						},
+						{
+							id:'resetDepot',
+							text: '重置',
+							iconCls: 'icon-reload',
+							handler: function(){
+								
+							}
+						}
+					],
+					columns: [
+						[{
+								width: 35,
+								align: "center",
+								checkbox: true
+							},
+							{
+								title: '仓库编号',
+								field: 'currNumber',
+								editor: 'combobox',
+								width: 230
+							},
+							{
+								title: '商品',
+								field: 'Unit',
+								editor: 'combobox',
+								width: 60
+							},
+							{
+								title: '当前数量',
+								field: 'OperNumber',
+								editor: 'validatebox',
+								width: 60
+							},
+							{
+								title: '目标仓库',
+								field: 'UnitPrice',
+								editor: 'validatebox',
+								width: 60
+							},
+							{
+								title: '调拨数量',
+								field: 'AllPrice',
+								editor: 'validatebox',
+								width: 75
+							},
+						]
+					],
+					onLoadError: function() {
+						$.messager.alert('页面加载提示', '页面加载异常，请稍后再试！', 'error');
+						return;
+					}
+				});
+			}
+		</script>
 	</head>
+
 	<body>
-		<div id="searchPanel" class="easyui-panel" style="padding:3px;" title="查询窗口" iconCls="icon-search" collapsible="true"
-     closable="false">
-    <table id="searchTable">
-        <tr>
-            <td>单据编号：</td>
-            <td>
-                <input type="text" name="searchNumber" id="searchNumber" style="width:100px;"/>
-            </td>
-            <td>商品信息：</td>
-            <td>
-                <input type="text" name="searchMaterial" id="searchMaterial" placeholder="名称，型号" style="width:100px;"/>
-            </td>
-            <td>单据日期：</td>
-            <td>
-                <input type="text" name="searchBeginTime" id="searchBeginTime"
-                       onClick="WdatePicker({dateFmt:'yyyy-MM-dd'})" class="txt Wdate" 
-                       style="width:100px;"/>
-                <!--<input class="easyui-datetimebox" name="searchBeginTime"     
+		<div id="searchPanel" class="easyui-panel" style="padding:3px;" title="查询窗口" iconCls="icon-search" collapsible="true" closable="false">
+			<table id="searchTable">
+				<tr>
+					<td>单据编号：</td>
+					<td>
+						<input type="text" name="searchNumber" id="searchNumber" style="width:100px;" />
+					</td>
+					<td>商品信息：</td>
+					<td>
+						<input type="text" name="searchMaterial" id="searchMaterial" placeholder="名称，型号" style="width:100px;" />
+					</td>
+					<td>单据日期：</td>
+					<td>
+						<input type="text" name="searchBeginTime" id="searchBeginTime" onClick="WdatePicker({dateFmt:'yyyy-MM-dd'})" class="txt Wdate" style="width:100px;" />
+						<!--<input class="easyui-datetimebox" name="searchBeginTime"     
         data-options="required:true,showSeconds:false" style="width:150px">  -->
-                
-            </td>
-            <td>-</td>
-            <td>
-                <input type="text" name="searchEndTime" id="searchEndTime" onClick="WdatePicker({dateFmt:'yyyy-MM-dd'})"
-                       class="txt Wdate" style="width:100px;"/>
-                <!--<input class="easyui-datetimebox" name="searchEndTime"     
+
+					</td>
+					<td>-</td>
+					<td>
+						<input type="text" name="searchEndTime" id="searchEndTime" onClick="WdatePicker({dateFmt:'yyyy-MM-dd'})" class="txt Wdate" style="width:100px;" />
+						<!--<input class="easyui-datetimebox" name="searchEndTime"     
         data-options="required:true,showSeconds:false" style="width:150px">-->
-            </td>
-            <td>&nbsp;</td>
-            <td>
-                <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-search" id="searchBtn">查询</a>&nbsp;
-                <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-redo" id="searchResetBtn">重置</a>
-            </td>
-        </tr>
-    </table>
-</div>
-<!-- 数据显示table -->
-<div id="tablePanel" class="easyui-panel" style="padding:1px;top:300px;" title="调拨出库列表" iconCls="icon-list"
-     collapsible="true" closable="false">
-    <table id="tableData" style="top:300px;border-bottom-color:#FFFFFF"></table>
-</div>
-<!--单据详细-->
-<div id="depotHeadDlgShow" class="easyui-dialog" style="width:1200px;padding:10px 20px;top:70px"
-     closed="true" buttons="#dlg-buttons-show" modal="true" cache="false" collapsible="false" closable="true">
-    <table>
-        <tr>
-            <td style="width:60px;">单据日期：</td>
-            <td style="padding:5px;width:130px;">
-                <span id="OperTimeShow"></span>
-            </td>
-            <td style="width:70px;">单据编号：</td>
-            <td style="padding:5px;width:130px;">
-                <span id="NumberShow"></span>
-            </td>
-            <td style="width:80px;"></td>
-            <td style="padding:5px;width:140px;"></td>
-            <td style="width:70px;"></td>
-            <td style="padding:5px;width:140px;"></td>
-            <td style="width:100px;"></td>
-        </tr>
-        <tr>
-            <td colspan="9" style="width: 1130px;">
-                <!-- 商品列表table -->
-                <table id="materialDataShow" style="top:100px;border-bottom-color:#FFFFFF"></table>
-            </td>
-        </tr>
-        <tr>
-            <td style="width:60px;">单据备注：</td>
-            <td colspan="8" style="height:35px;">
-                <span id="RemarkShow" style="width: 1070px; height:35px;"></span>
-            </td>
-        </tr>
-    </table>
-</div>
-<div id="dlg-buttons-show">
-    <a href="javascript:void(0)" id="printDepotHeadShow" class="easyui-linkbutton" iconCls="icon-ok">打印</a>
-    <a href="javascript:void(0)" id="cancelDepotHeadShow" class="easyui-linkbutton" iconCls="icon-cancel"
-       onclick="javascript:$('#depotHeadDlgShow').dialog('close')">取消</a>
-</div>
-<!--添加单据列表-->
-<div id="depotHeadDlg" class="easyui-dialog" style="width:1200px;padding:10px 20px;top:60px"
-     closed="true" buttons="#dlg-buttons" modal="true" cache="false" collapsible="false" closable="true">
-    <form id="depotHeadFM" method="post" novalidate>
-        <table>
-            <tr>
-                <td style="width:60px;">单据日期：</td>
-                <td style="padding:5px;width:170px;">
-                    <input type="text" name="OperTime" id="OperTime"
-                           onClick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'})" class="txt Wdate"
-                           style="width:140px;" readonly/>
-                </td>
-                <td style="width:70px;">单据编号：</td>
-                <td style="padding:5px">
-                    <input name="Number" id="Number" style="width:150px;" readonly/>
-                </td>
-                <td style="width:80px;"></td>
-                <td style="padding:5px;width:170px;"></td>
-                <td style="width:70px;"></td>
-                <td style="padding:5px"></td>
-                <td style="width:100px;"></td>
-            </tr>
-            <tr>
-                <td colspan="9">
-                    <!-- 商品列表table -->
-                    <table id="materialData" style="top:100px;border-bottom-color:#FFFFFF"></table>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="9">
-                    <textarea name="Remark" id="Remark" rows="2" cols="2" placeholder="暂无备注信息"
-                              style="width: 1130px; height:35px;"></textarea>
-                </td>
-            </tr>
-        </table>
-        <input type="hidden" name="clientIp" id="clientIp" value="<%=clientIp %>"/>
-    </form>
-</div>
-<div id="dlg-buttons">
-    <a href="javascript:void(0)" id="saveDepotHead" class="easyui-linkbutton" iconCls="icon-ok">保存</a>
-    <a href="javascript:void(0)" id="cancelDepotHead" class="easyui-linkbutton" iconCls="icon-cancel"
-       onclick="javascript:$('#depotHeadDlg').dialog('close')">取消</a>
-</div>
+					</td>
+					<td>&nbsp;</td>
+					<td>
+						<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-search" id="searchBtn">查询</a>&nbsp;
+						<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-redo" id="searchResetBtn">重置</a>
+					</td>
+				</tr>
+			</table>
+		</div>
+		<!-- 数据显示table -->
+		<div id="tablePanel" class="easyui-panel" style="padding:1px;top:300px;" title="调拨出库列表" iconCls="icon-list" collapsible="true" closable="false">
+			<table id="tableData" style="top:300px;border-bottom-color:#FFFFFF"></table>
+		</div>
+		<!--单据详细-->
+		<div id="depotHeadDlgShow" class="easyui-dialog" style="width:1200px;padding:10px 20px;top:70px" closed="true" buttons="#dlg-buttons-show" modal="true" cache="false" collapsible="false" closable="true">
+			<table>
+				<tr>
+					<td style="width:60px;">单据日期：</td>
+					<td style="padding:5px;width:130px;">
+						<span id="OperTimeShow"></span>
+					</td>
+					<td style="width:70px;">单据编号：</td>
+					<td style="padding:5px;width:130px;">
+						<span id="NumberShow"></span>
+					</td>
+					<td style="width:80px;"></td>
+					<td style="padding:5px;width:140px;"></td>
+					<td style="width:70px;"></td>
+					<td style="padding:5px;width:140px;"></td>
+					<td style="width:100px;"></td>
+				</tr>
+				<tr>
+					<td colspan="9" style="width: 1130px;">
+						<!-- 商品列表table -->
+						<table id="materialDataShow" style="top:100px;border-bottom-color:#FFFFFF"></table>
+					</td>
+				</tr>
+				<tr>
+					<td style="width:60px;">单据备注：</td>
+					<td colspan="8" style="height:35px;">
+						<span id="RemarkShow" style="width: 1070px; height:35px;"></span>
+					</td>
+				</tr>
+			</table>
+		</div>
+		<div id="dlg-buttons-show">
+			<a href="javascript:void(0)" id="printDepotHeadShow" class="easyui-linkbutton" iconCls="icon-ok">打印</a>
+			<a href="javascript:void(0)" id="cancelDepotHeadShow" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#depotHeadDlgShow').dialog('close')">取消</a>
+		</div>
+		<!--添加单据列表-->
+		<div id="depotHeadDlg" class="easyui-dialog" style="width:1200px;padding:10px 20px;top:60px" closed="true" buttons="#dlg-buttons" modal="true" cache="false" collapsible="false" closable="true">
+			<form id="depotHeadFM" method="post" novalidate>
+				<table>
+					<tr>
+						<td style="width:80px;">单据日期：</td>
+						<td style="padding:5px;width:170px;">
+							<input type="text" name="OperTime" id="OperTime" onClick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'})" class="txt Wdate" style="width:140px;" readonly/>
+						</td>
+						<td style="width:80px;">单据编号：</td>
+						<td style="padding:5px">
+							<input name="Number" id="Number" style="width:150px;" readonly/>
+						</td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+					</tr>
+					<tr>
+						<td colspan="9">
+							<!-- 商品列表table -->
+							<table id="materialData" style="top:100px;border-bottom-color:#FFFFFF"></table>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="9">
+							<textarea name="Remark" id="Remark" rows="2" cols="2" placeholder="暂无备注信息" style="width: 1130px; height:35px;"></textarea>
+						</td>
+					</tr>
+				</table>
+				<input type="hidden" name="clientIp" id="clientIp" value="<%=clientIp %>" />
+			</form>
+		</div>
+		<div id="dlg-buttons">
+			<a href="javascript:void(0)" id="saveDepotHead" class="easyui-linkbutton" iconCls="icon-ok">保存</a>
+			<a href="javascript:void(0)" id="cancelDepotHead" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#depotHeadDlg').dialog('close')">取消</a>
+		</div>
 	</body>
+
 </html>
