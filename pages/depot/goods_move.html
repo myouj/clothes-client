@@ -10,10 +10,10 @@
 		<script type="text/javascript" src="../../easyui/jquery.min.js"></script>
 		<script type="text/javascript" src="../../easyui/jquery.easyui.min.js"></script>
 		<script type="text/javascript" src="../../js/My97DatePicker/WdatePicker.js"></script>
+		<script type="text/javascript" src="../../js/time.js"></script>
 		<script>
 			$(function() {
 				initTableData();
-				initGoodsTB();
 			});
 
 			//初始化表格
@@ -83,8 +83,11 @@
 							text: '增加',
 							iconCls: 'icon-add',
 							handler: function() {
-								$("#depotHeadDlg").dialog('open').dialog('setTitle', '<img src="../../easyui/themes/icons/edit_add.png"/>&nbsp;商品调拨信息');
+								$("#depotHeadDlg").dialog('open').dialog('setTitle', '<img src="../../easyui/themes/icons/edit_add.png"/>&nbsp;增加调拨信息');
 								initGoodsTB();
+								getNewNum();
+								initCombox("#curr_depot");
+								initCombox("#to_depot");
 							}
 						},
 						{
@@ -109,27 +112,25 @@
 			}
 
 			function initGoodsTB() {
+				$("#create_time").val(today());
 				$("#materialData").datagrid({
 					height: 245,
 					rownumbers: true,
 					//动画效果
 					animate: false,
-					//选中单行
-					singleSelect: true,
 					collapsible: false,
 					selectOnCheck: false,
 					pagination: false,
 					//交替出现背景
 					striped: true,
 					showFooter: true,
-					//					onClickRow: onClickRow,
 					toolbar: [{
 							id: 'addDepot',
 							text: '增加',
 							iconCls: 'icon-add',
 							handler: function() {
-								$("#depotHeadDlg").dialog('open').dialog('setTitle', '<img src="../../easyui/themes/icons/edit_add.png"/>&nbsp;商品调拨信息');
-								initGoodsTB();
+								$("#addDlg").dialog('open').dialog('setTitle', '<img src="../../easyui/themes/icons/edit_add.png"/>&nbsp;增加商品信息');;
+								getGoods();
 							}
 						},
 						{
@@ -137,60 +138,133 @@
 							text: '删除',
 							iconCls: 'icon-remove',
 							handler: function() {
-
+								var row = $('#materialData').datagrid('getChecked');
+								if(row.length == 0) {
+									alert("请选择");
+									return;
+								}
+								if(row.length > 0) {	
+									for(var i = 0; i < row.length; i++) {
+										var index = $('#materialData').datagrid('getRowIndex', row[i]);
+										alert(index);
+										var index = $('#materialData').datagrid('deleteRow', index);
+									}
+								}
 							}
 						},
 						{
-							id:'resetDepot',
+							id: 'resetDepot',
 							text: '重置',
 							iconCls: 'icon-reload',
-							handler: function(){
-								
+							handler: function() {
+								$('#materialData').datagrid('loadData',{total:0,rows:[]});
 							}
 						}
 					],
 					columns: [
 						[{
+								field: 'id',
 								width: 35,
 								align: "center",
 								checkbox: true
 							},
 							{
-								title: '仓库编号',
-								field: 'currNumber',
-								editor: 'combobox',
+								title: '商品',
+								field: 'name',
 								width: 230
 							},
 							{
-								title: '商品',
-								field: 'Unit',
-								editor: 'combobox',
-								width: 60
-							},
-							{
-								title: '当前数量',
-								field: 'OperNumber',
-								editor: 'validatebox',
-								width: 60
-							},
-							{
-								title: '目标仓库',
-								field: 'UnitPrice',
-								editor: 'validatebox',
-								width: 60
-							},
-							{
 								title: '调拨数量',
-								field: 'AllPrice',
-								editor: 'validatebox',
-								width: 75
+								field: 'to_count',
+								width: 80
 							},
+							{
+								title: '单位',
+								field: 'unit',
+								width: 60
+							}
 						]
 					],
 					onLoadError: function() {
 						$.messager.alert('页面加载提示', '页面加载异常，请稍后再试！', 'error');
 						return;
 					}
+				});
+			}
+
+			function addGoods() {
+				var name = $("#name").val();
+				var to_count = $("#to_count").val();
+				var unit = $("#unit").val();
+				$("#materialData").datagrid('appendRow', {
+					name: name,
+					to_count: to_count,
+					unit: unit
+				});
+				close_addFM();
+				var rows = $("#materialData").datagrid('getRows');
+				var sum = 0;
+				for(var i = 0; i < rows.length; i++){
+					sum = sum + Number(rows[i].to_count);
+					
+				}
+				$("#sum").numberbox('setValue', sum);
+			}
+
+			function close_addFM() {
+				$("#name").val("");
+				$("#to_count").numberbox('setValue', 0);
+				$("#unit").val("");
+				$("#curr_count").val("");
+				$("#tar_count").val("");
+				$("#addDlg").dialog('close');
+			}
+			
+			function getNewNum(){
+				var num;
+				$.ajax({
+					type:"get",
+					url:"http://localhost:8001/allocation-info/getNewNum",
+					xhrFields: {withCredentials:true},
+					success: function(data){
+						if(data.code == 200){
+							$("#new_num").val(data.data);
+						}else{
+							alert("获取新单号失败!");
+						}
+					},
+					error: function(){
+						alert("系统错误!");
+					}
+				});
+				
+			}
+			
+			function getGoods(){
+				var depotNum = $("#curr_depot").val();
+				$("#name").combobox({
+					method: "get",
+					url: "http://localhost:8001/depot-goods/getDepotGoodsByDnum?depotNum=" + depotNum,
+					textField: "goodsName",
+					valueField: "goodsName",
+					onSelect: function(pa){
+						var good = pa.goodsName;
+						var curr_d = $("#curr_depot").val();
+						var to_d = $("#to_depot").val();
+						//todo
+					}
+				});
+			}
+			
+			
+			
+			function initCombox(it){
+				$(it).combobox({
+					method: "get",
+					url: "http://localhost:8001/depot/getDepot",
+					textField: "num",
+					valueField: "num"
+					
 				});
 			}
 		</script>
@@ -211,15 +285,12 @@
 					<td>单据日期：</td>
 					<td>
 						<input type="text" name="searchBeginTime" id="searchBeginTime" onClick="WdatePicker({dateFmt:'yyyy-MM-dd'})" class="txt Wdate" style="width:100px;" />
-						<!--<input class="easyui-datetimebox" name="searchBeginTime"     
-        data-options="required:true,showSeconds:false" style="width:150px">  -->
-
+					
 					</td>
 					<td>-</td>
 					<td>
 						<input type="text" name="searchEndTime" id="searchEndTime" onClick="WdatePicker({dateFmt:'yyyy-MM-dd'})" class="txt Wdate" style="width:100px;" />
-						<!--<input class="easyui-datetimebox" name="searchEndTime"     
-        data-options="required:true,showSeconds:false" style="width:150px">-->
+						
 					</td>
 					<td>&nbsp;</td>
 					<td>
@@ -276,22 +347,32 @@
 					<tr>
 						<td style="width:80px;">单据日期：</td>
 						<td style="padding:5px;width:170px;">
-							<input type="text" name="OperTime" id="OperTime" onClick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'})" class="txt Wdate" style="width:140px;" readonly/>
+							<input type="text" name="create_time" id="create_time" class="txt Wdate" style="width:140px;" readonly/>
 						</td>
 						<td style="width:80px;">单据编号：</td>
 						<td style="padding:5px">
-							<input name="Number" id="Number" style="width:150px;" readonly/>
+							<input  name="new_num" id="new_num" style="width:150px;" readonly/>
 						</td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
+						<td style="width:80px;">仓库编号：</td>
+						<td style="padding:5px">
+							<input name="curr_depot" id="curr_depot" class="easyui-combobox" style="width:150px;" />
+						</td>
+						<td style="width:80px;">目标仓库：</td>
+						<td style="padding:5px">
+							<input name="to_depot" id="to_depot" class="easyui-combobox" style="width:150px;" />
+						</td>
+						<td style="padding:5px;width:100px;"></td>
 					</tr>
 					<tr>
 						<td colspan="9">
 							<!-- 商品列表table -->
 							<table id="materialData" style="top:100px;border-bottom-color:#FFFFFF"></table>
+						</td>
+					</tr>
+					<tr>
+						<td style="width:80px;">总数量：</td>
+						<td style="padding:5px">
+							<input name="sum" id="sum" class="easyui-numberbox" data-options="value:0" style="width:150px;" readonly/>
 						</td>
 					</tr>
 					<tr>
@@ -304,8 +385,50 @@
 			</form>
 		</div>
 		<div id="dlg-buttons">
-			<a href="javascript:void(0)" id="saveDepotHead" class="easyui-linkbutton" iconCls="icon-ok">保存</a>
-			<a href="javascript:void(0)" id="cancelDepotHead" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#depotHeadDlg').dialog('close')">取消</a>
+			<a href="javascript:void(0)" id="saveAll" class="easyui-linkbutton" iconCls="icon-ok">保存</a>
+			<a href="javascript:void(0)" id="cancelAll" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#depotHeadDlg').dialog('close')">取消</a>
+		</div>
+		<div id="addDlg" class="easyui-dialog" closed="true" buttons="#add-buttons" modal="true" cache="false" collapsible="false" closable="true">
+			<form id="addFM">
+				<table>
+					<tr>
+						<td>商品名</td>
+						<td style="padding: 5px;">
+							<input name="name" id="name" class="easyui-combobox" style="width: 230px; height: 20px;" />
+							<input name="id" id="id" type="hidden" />
+						</td>
+					</tr>
+					<tr>
+						<td>当前仓库数量</td>
+						<td style="padding: 5px;">
+							<input name="curr_count" id="curr_count" class="easyui-validatebox" style="width: 230px; height: 20px;" />
+						</td>
+					</tr>
+					<tr>
+						<td>目标仓库数量</td>
+						<td style="padding: 5px;">
+							<input name="tar_count" id="tar_count" class="easyui-validatebox" style="width: 230px; height: 20px;" />
+						</td>
+					</tr>
+					<tr>
+						<td>调拨数量</td>
+						<td style="padding: 5px;">
+							<input name="to_count" id="to_count" class="easyui-numberbox" data-options="value:0" style="width: 230px; height: 20px;" />
+						</td>
+
+					</tr>
+					<tr>
+						<td>单位</td>
+						<td style="padding: 5px;">
+							<input name="unit" id="unit" class="easyui-validatebox" style="width: 230px; height: 20px;" readonly/>
+						</td>
+					</tr>
+				</table>
+			</form>
+		</div>
+		<div id="add-buttons">
+			<a href="javascript:void(0)" id="addGoods" class="easyui-linkbutton" iconCls="icon-ok" onclick="addGoods()">保存</a>
+			<a href="javascript:void(0)" id="cancelAddGoods" class="easyui-linkbutton" iconCls="icon-cancel" onclick="close_addFM()">取消</a>
 		</div>
 	</body>
 
