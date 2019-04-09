@@ -84,10 +84,15 @@
 							iconCls: 'icon-add',
 							handler: function() {
 								$("#depotHeadDlg").dialog('open').dialog('setTitle', '<img src="../../easyui/themes/icons/edit_add.png"/>&nbsp;增加调拨信息');
+								$("#Remark").val("");
+								$("#sum").numberbox('setValue', 0);
 								initGoodsTB();
+								$('#materialData').datagrid('loadData',{total:0,rows:[]});
 								getNewNum();
 								initCombox("#curr_depot");
 								initCombox("#to_depot");
+								var operator = localStorage.getItem("name");
+								$("#operator").val(operator);
 							}
 						},
 						{
@@ -131,6 +136,9 @@
 							handler: function() {
 								$("#addDlg").dialog('open').dialog('setTitle', '<img src="../../easyui/themes/icons/edit_add.png"/>&nbsp;增加商品信息');;
 								getGoods();
+								$("#curr_count").numberbox("setValue", 0);
+								$("#tar_count").numberbox("setValue", 0);
+								
 							}
 						},
 						{
@@ -196,6 +204,14 @@
 				var name = $("#name").val();
 				var to_count = $("#to_count").val();
 				var unit = $("#unit").val();
+				if(name == ""){
+					alert("请选择商品");
+					return;
+				}
+				if(to_count == 0){
+					alert("请输入调拨的数量");
+					return;
+				}
 				$("#materialData").datagrid('appendRow', {
 					name: name,
 					to_count: to_count,
@@ -251,11 +267,40 @@
 						var good = pa.goodsName;
 						var curr_d = $("#curr_depot").val();
 						var to_d = $("#to_depot").val();
-						//todo
+						setCount(curr_d, good, 1);
+						setCount(to_d, good, 2);
 					}
 				});
 			}
 			
+			function setCount(dnum, goods, we){
+				$.ajax({
+					type:"get",
+					dataType: "json",
+					url:"http://localhost:8001/depot-goods/getCountsByDnumAndGoods?depotNum=" + dnum + "&goodsName=" + goods,
+					xhrFields: {withCredentials:true},
+					success: function(data){
+						if(data.code == 200){
+							if(we == 1){
+//								$("#curr_count").val(data.data.count);
+								$("#curr_count").numberbox("setValue", data.data.count);
+								$("#unit").val(data.data.unit);
+							}
+							if(we == 2){
+								if(data.data == null){
+									$("#tar_count").numberbox("setValue", 0);
+								}else{
+									$("#tar_count").numberbox("setValue", data.data.count);
+								}
+								
+							}
+						}
+					},
+					error: function(){
+						alert("系统错误!");
+					}
+				});
+			}
 			
 			
 			function initCombox(it){
@@ -263,8 +308,75 @@
 					method: "get",
 					url: "http://localhost:8001/depot/getDepot",
 					textField: "num",
-					valueField: "num"
+					valueField: "num",
+					onSelect: function(){
+						$('#materialData').datagrid('loadData',{total:0,rows:[]});
+						$("#sum").numberbox('setValue', 0);
+					}
 					
+				});
+			}
+			
+			function sendSava(){
+				var create_time = $("#create_time").val();
+				var new_num = $("#new_num").val();
+				var curr_depot = $("#curr_depot").val();
+				var to_depot = $("#to_depot").val();
+				var sum = $("#sum").numberbox('getValue');
+				var operator = $("#operator").val();
+				var Remark = $("#Remark").val();
+				var goods = "";
+				var rows = $("#materialData").datagrid('getRows');
+				if(operator == ""){
+					alert("获取操作者失败，请重新登陆");
+					top.location.href="login.html";
+					return;
+				}
+				if(curr_depot == "" || to_depot == ""){
+					alert("请选择仓库");
+					return;
+				}
+				if(curr_depot == to_depot){
+					alert("请选择出入库仓库");
+					return;
+				}
+				if(rows.length == 0){
+					alert("请添加需要调拨的商品");
+					return;
+				}
+				for(var i = 0; i < rows.length; i++){
+					goods += rows[i].name;
+					goods += ":";
+					goods += rows[i].to_count;
+					goods += ":";
+					goods += rows[i].unit;
+					goods += ";";
+				}
+//				alert(create_time + " " + new_num + " " +curr_depot + " " +to_depot +
+//				" " +sum + " " +operator + " " +Remark + " " +goods);
+				$.ajax({
+					type:"get",
+					url:"http://localhost:8001/allocation-info/insert",
+					xhrFields: {withCredentials:true},
+					dataType: "json",
+					data: ({
+						'number': new_num,
+						'currDepot': curr_depot,
+						'toDepot': to_depot,
+						'goodsInfo': goods,
+						'amount': sum,
+						'operatorTime': create_time,
+						'operator': operator,
+						'remark': Remark
+					}),
+					success: function(data){
+						if(data.code == 200){
+							alert("发送成功");
+						}
+					},
+					error: function(){
+						alert("系统错误!");
+					}
 				});
 			}
 		</script>
@@ -374,6 +486,10 @@
 						<td style="padding:5px">
 							<input name="sum" id="sum" class="easyui-numberbox" data-options="value:0" style="width:150px;" readonly/>
 						</td>
+						<td style="width:80px;">操作人：</td>
+						<td style="padding:5px">
+							<input name="operator" id="operator" style="width:150px;" readonly/>
+						</td>
 					</tr>
 					<tr>
 						<td colspan="9">
@@ -381,11 +497,10 @@
 						</td>
 					</tr>
 				</table>
-				<input type="hidden" name="clientIp" id="clientIp" value="<%=clientIp %>" />
 			</form>
 		</div>
 		<div id="dlg-buttons">
-			<a href="javascript:void(0)" id="saveAll" class="easyui-linkbutton" iconCls="icon-ok">保存</a>
+			<a href="javascript:void(0)" id="saveAll" class="easyui-linkbutton" iconCls="icon-ok" onclick="sendSava()">保存</a>
 			<a href="javascript:void(0)" id="cancelAll" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#depotHeadDlg').dialog('close')">取消</a>
 		</div>
 		<div id="addDlg" class="easyui-dialog" closed="true" buttons="#add-buttons" modal="true" cache="false" collapsible="false" closable="true">
@@ -401,13 +516,13 @@
 					<tr>
 						<td>当前仓库数量</td>
 						<td style="padding: 5px;">
-							<input name="curr_count" id="curr_count" class="easyui-validatebox" style="width: 230px; height: 20px;" />
+							<input name="curr_count" id="curr_count" class="easyui-numberbox" style="width: 230px; height: 20px;" readonly />
 						</td>
 					</tr>
 					<tr>
 						<td>目标仓库数量</td>
 						<td style="padding: 5px;">
-							<input name="tar_count" id="tar_count" class="easyui-validatebox" style="width: 230px; height: 20px;" />
+							<input name="tar_count" id="tar_count" class="easyui-numberbox" style="width: 230px; height: 20px;" readonly />
 						</td>
 					</tr>
 					<tr>
