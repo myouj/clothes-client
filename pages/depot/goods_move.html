@@ -19,91 +19,90 @@
 			//初始化表格
 			function initTableData() {
 				$('#tableData').datagrid({
-					url: '',
+					url: 'http://localhost:8001/allocation-info/getAllocationList',
 					method: 'get',
-					checkOnSelect: false,
-					singleSelect: false,
 					columns: [
 						[{
-								field: 'id',
-								width: 35,
-								align: "center",
-								checkbox: true
+								title: '单号',
+								field: 'number',
+								width: 40,
+								align: 'center'
 							},
 							{
+
 								title: '操作',
 								field: 'op',
 								align: "center",
 								width: 60,
 								formatter: function(value, data) {
 									var str = '';
-									str += '<img title="详细" src="../../easyui/themes/icons/pencil.png" style="cursor: pointer;" onclick="editDepot(\'' + data.id + '\');';
+									str += '<img title="编辑" src="../../easyui/themes/icons/pencil.png" style="cursor: pointer;"/>&nbsp;&nbsp;&nbsp;';
+									str += '<img title="删除" src="../../easyui/themes/icons/more.png" style="cursor: pointer;" onclick="detail(\'' + data.id + '\');"/>';
 									return str;
 								}
 							},
-							{
-								title: '单号',
-								field: 'num',
-								width: 70
-							},
+
 							{
 								title: '存货仓库',
-								field: 'address',
-								width: 300
+								field: 'currDepot',
+								width: 80,
+								align: 'center'
 							},
 							{
 								title: '目标仓库',
-								field: 'capacity',
-								width: 80
+								field: 'toDepot',
+								width: 80,
+								align: 'center'
 							},
 							{
 								title: '商品信息',
-								field: 'currCount',
-								width: 80
+								field: 'goodsInfo',
+								width: 200
 							},
 							{
 								title: '总数量',
-								field: 'manager',
-								width: 80
+								field: 'amount',
+								width: 80,
+								align: 'center'
 							},
 							{
 								title: '时间',
-								field: 'managerTel',
-								width: 100
+								field: 'operatorTime',
+								width: 150
+							},
+							{
+								title: '操作人',
+								field: 'operator',
+								width: 60,
+								align: 'center'
 							},
 							{
 								title: '详细',
 								field: 'remark',
-								width: 800
+								width: 200
 							}
 						]
 					],
 					toolbar: [{
-							id: 'addDepot',
-							text: '增加',
-							iconCls: 'icon-add',
-							handler: function() {
-								$("#depotHeadDlg").dialog('open').dialog('setTitle', '<img src="../../easyui/themes/icons/edit_add.png"/>&nbsp;增加调拨信息');
-								$("#Remark").val("");
-								$("#sum").numberbox('setValue', 0);
-								initGoodsTB();
-								$('#materialData').datagrid('loadData',{total:0,rows:[]});
-								getNewNum();
-								initCombox("#curr_depot");
-								initCombox("#to_depot");
-								var operator = localStorage.getItem("name");
-								$("#operator").val(operator);
-							}
-						},
-						{
-							id: 'deleteDepot',
-							text: '删除',
-							iconCls: 'icon-remove',
-							handler: function() {
-
-							}
+						id: 'addDepot',
+						text: '增加',
+						iconCls: 'icon-add',
+						handler: function() {
+							$("#depotHeadDlg").dialog('open').dialog('setTitle', '<img src="../../easyui/themes/icons/edit_add.png"/>&nbsp;增加调拨信息');
+							$("#Remark").val("");
+							$("#sum").numberbox('setValue', 0);
+							initGoodsTB();
+							$('#materialData').datagrid('loadData', {
+								total: 0,
+								rows: []
+							});
+							getNewNum();
+							initCombox("#curr_depot");
+							initCombox("#to_depot");
+							var operator = localStorage.getItem("name");
+							$("#operator").val(operator);
 						}
-					],
+					}],
 					pagination: true,
 					pageSize: 10,
 					pageList: [5, 10, 20],
@@ -114,6 +113,64 @@
 
 				});
 
+			}
+
+			function detail(id) {
+				$("#depotHeadDlgShow").dialog('open');
+				initMaterialDataShow();
+				$.ajax({
+					type: "get",
+					url: "http://localhost:8001/allocation-info/getAllocationById?id=" + id,
+					xhrFields: {
+						withCredentials: true
+					},
+					success: function(data) {
+						if(data.code == 200) {
+							//							$("#OperTimeShow").val(data.data.operatorTime);
+							$("#OperTimeShow").append('<span id="a1">' + data.data.all.operatorTime + '</span>');
+							$("#NumberShow").append('<span id="a2">' + data.data.all.number + '</span>');
+							$("#currdepot").append('<span id="a3">' + data.data.all.currDepot + '</span>');
+							$("#todepot").append('<span id="a4">' + data.data.all.toDepot + '</span>');
+							$("#RemarkShow").append('<span id="a5">' + data.data.all.remark + '</span>');
+							$("#amount").append('<span id="a6">' + data.data.all.amount + '</span>');
+							$("#opertor").append('<span id="a7">' + data.data.all.operator + '</span>');
+
+							$.each(data.data.goods, function(i, good) {
+								$("#materialDataShow").datagrid('appendRow', {
+									goods: good.goods,
+									count: good.count,
+									unit: good.unit
+								});
+							});
+
+						} else {
+							alert("请求错误，请重新操作");
+						}
+					},
+					error: function() {
+						alert("系统错误");
+					}
+				});
+			}
+
+			function searchBtn() {
+				var searchNumber = $("#searchNumber").val();
+				var searchMaterial = $("#searchMaterial").val();
+				var searchBeginTime = $("#searchBeginTime").val();
+				var searchEndTime = $("#searchEndTime").val();
+				$("#tableData").datagrid('load', {
+					searchNumber: searchNumber,
+					searchMaterial: searchMaterial,
+					searchBeginTime: searchBeginTime,
+					searchEndTime: searchEndTime
+				});
+			}
+
+			function searchResetBtn() {
+				$("#searchNumber").val("");
+				$("#searchMaterial").val("");
+				$("#searchBeginTime").val("");
+				$("#searchEndTime").val("");
 			}
 
 			function initGoodsTB() {
@@ -138,7 +195,7 @@
 								getGoods();
 								$("#curr_count").numberbox("setValue", 0);
 								$("#tar_count").numberbox("setValue", 0);
-								
+
 							}
 						},
 						{
@@ -151,7 +208,7 @@
 									alert("请选择");
 									return;
 								}
-								if(row.length > 0) {	
+								if(row.length > 0) {
 									for(var i = 0; i < row.length; i++) {
 										var index = $('#materialData').datagrid('getRowIndex', row[i]);
 										alert(index);
@@ -165,7 +222,10 @@
 							text: '重置',
 							iconCls: 'icon-reload',
 							handler: function() {
-								$('#materialData').datagrid('loadData',{total:0,rows:[]});
+								$('#materialData').datagrid('loadData', {
+									total: 0,
+									rows: []
+								});
 							}
 						}
 					],
@@ -204,11 +264,17 @@
 				var name = $("#name").val();
 				var to_count = $("#to_count").val();
 				var unit = $("#unit").val();
-				if(name == ""){
+				var curr_count = $("#curr_count").val();
+				//				alert(to_count + " " + curr_count);
+				if(Number(to_count) > Number(curr_count)) {
+					alert("调拨数量不能超过仓库库存数量");
+					return;
+				}
+				if(name == "") {
 					alert("请选择商品");
 					return;
 				}
-				if(to_count == 0){
+				if(to_count == 0) {
 					alert("请输入调拨的数量");
 					return;
 				}
@@ -220,9 +286,9 @@
 				close_addFM();
 				var rows = $("#materialData").datagrid('getRows');
 				var sum = 0;
-				for(var i = 0; i < rows.length; i++){
+				for(var i = 0; i < rows.length; i++) {
 					sum = sum + Number(rows[i].to_count);
-					
+
 				}
 				$("#sum").numberbox('setValue', sum);
 			}
@@ -235,35 +301,37 @@
 				$("#tar_count").val("");
 				$("#addDlg").dialog('close');
 			}
-			
-			function getNewNum(){
+
+			function getNewNum() {
 				var num;
 				$.ajax({
-					type:"get",
-					url:"http://localhost:8001/allocation-info/getNewNum",
-					xhrFields: {withCredentials:true},
-					success: function(data){
-						if(data.code == 200){
+					type: "get",
+					url: "http://localhost:8001/allocation-info/getNewNum",
+					xhrFields: {
+						withCredentials: true
+					},
+					success: function(data) {
+						if(data.code == 200) {
 							$("#new_num").val(data.data);
-						}else{
+						} else {
 							alert("获取新单号失败!");
 						}
 					},
-					error: function(){
+					error: function() {
 						alert("系统错误!");
 					}
 				});
-				
+
 			}
-			
-			function getGoods(){
+
+			function getGoods() {
 				var depotNum = $("#curr_depot").val();
 				$("#name").combobox({
 					method: "get",
 					url: "http://localhost:8001/depot-goods/getDepotGoodsByDnum?depotNum=" + depotNum,
 					textField: "goodsName",
 					valueField: "goodsName",
-					onSelect: function(pa){
+					onSelect: function(pa) {
 						var good = pa.goodsName;
 						var curr_d = $("#curr_depot").val();
 						var to_d = $("#to_depot").val();
@@ -272,113 +340,175 @@
 					}
 				});
 			}
-			
-			function setCount(dnum, goods, we){
+
+			function setCount(dnum, goods, we) {
 				$.ajax({
-					type:"get",
+					type: "get",
 					dataType: "json",
-					url:"http://localhost:8001/depot-goods/getCountsByDnumAndGoods?depotNum=" + dnum + "&goodsName=" + goods,
-					xhrFields: {withCredentials:true},
-					success: function(data){
-						if(data.code == 200){
-							if(we == 1){
-//								$("#curr_count").val(data.data.count);
+					url: "http://localhost:8001/depot-goods/getCountsByDnumAndGoods?depotNum=" + dnum + "&goodsName=" + goods,
+					xhrFields: {
+						withCredentials: true
+					},
+					success: function(data) {
+						if(data.code == 200) {
+							if(we == 1) {
+								//								$("#curr_count").val(data.data.count);
 								$("#curr_count").numberbox("setValue", data.data.count);
 								$("#unit").val(data.data.unit);
 							}
-							if(we == 2){
-								if(data.data == null){
+							if(we == 2) {
+								if(data.data == null) {
 									$("#tar_count").numberbox("setValue", 0);
-								}else{
+								} else {
 									$("#tar_count").numberbox("setValue", data.data.count);
 								}
-								
+
 							}
 						}
 					},
-					error: function(){
+					error: function() {
 						alert("系统错误!");
 					}
 				});
 			}
-			
-			
-			function initCombox(it){
+
+			function initCombox(it) {
 				$(it).combobox({
 					method: "get",
 					url: "http://localhost:8001/depot/getDepot",
 					textField: "num",
 					valueField: "num",
-					onSelect: function(){
-						$('#materialData').datagrid('loadData',{total:0,rows:[]});
+					onSelect: function() {
+						$('#materialData').datagrid('loadData', {
+							total: 0,
+							rows: []
+						});
 						$("#sum").numberbox('setValue', 0);
 					}
-					
+
 				});
 			}
-			
-			function sendSava(){
-				var create_time = $("#create_time").val();
-				var new_num = $("#new_num").val();
-				var curr_depot = $("#curr_depot").val();
-				var to_depot = $("#to_depot").val();
-				var sum = $("#sum").numberbox('getValue');
-				var operator = $("#operator").val();
-				var Remark = $("#Remark").val();
-				var goods = "";
-				var rows = $("#materialData").datagrid('getRows');
-				if(operator == ""){
-					alert("获取操作者失败，请重新登陆");
-					top.location.href="login.html";
-					return;
-				}
-				if(curr_depot == "" || to_depot == ""){
-					alert("请选择仓库");
-					return;
-				}
-				if(curr_depot == to_depot){
-					alert("请选择出入库仓库");
-					return;
-				}
-				if(rows.length == 0){
-					alert("请添加需要调拨的商品");
-					return;
-				}
-				for(var i = 0; i < rows.length; i++){
-					goods += rows[i].name;
-					goods += ":";
-					goods += rows[i].to_count;
-					goods += ":";
-					goods += rows[i].unit;
-					goods += ";";
-				}
-//				alert(create_time + " " + new_num + " " +curr_depot + " " +to_depot +
-//				" " +sum + " " +operator + " " +Remark + " " +goods);
-				$.ajax({
-					type:"get",
-					url:"http://localhost:8001/allocation-info/insert",
-					xhrFields: {withCredentials:true},
-					dataType: "json",
-					data: ({
-						'number': new_num,
-						'currDepot': curr_depot,
-						'toDepot': to_depot,
-						'goodsInfo': goods,
-						'amount': sum,
-						'operatorTime': create_time,
-						'operator': operator,
-						'remark': Remark
-					}),
-					success: function(data){
-						if(data.code == 200){
-							alert("发送成功");
+
+			function sendSava() {
+				$.messager.confirm('添加确认', '请确认填写信息', function(r) {
+						if(r) {
+							var create_time = $("#create_time").val();
+							var new_num = $("#new_num").val();
+							var curr_depot = $("#curr_depot").val();
+							var to_depot = $("#to_depot").val();
+							var sum = $("#sum").numberbox('getValue');
+							var operator = $("#operator").val();
+							var Remark = $("#Remark").val();
+							var goods = "";
+							var rows = $("#materialData").datagrid('getRows');
+							if(operator == "") {
+								alert("获取操作者失败，请重新登陆");
+								top.location.href = "login.html";
+								return;
+							}
+							if(curr_depot == "" || to_depot == "") {
+								alert("请选择仓库");
+								return;
+							}
+							if(curr_depot == to_depot) {
+								alert("请选择出入库仓库");
+								return;
+							}
+							if(rows.length == 0) {
+								alert("请添加需要调拨的商品");
+								return;
+							}
+							for(var i = 0; i < rows.length; i++) {
+								goods += rows[i].name;
+								goods += ":";
+								goods += rows[i].to_count;
+								goods += ":";
+								goods += rows[i].unit;
+								goods += ";";
+							}
+							//				alert(create_time + " " + new_num + " " +curr_depot + " " +to_depot +
+							//				" " +sum + " " +operator + " " +Remark + " " +goods);
+							$.ajax({
+								type: "get",
+								url: "http://localhost:8001/allocation-info/insert",
+								xhrFields: {
+									withCredentials: true
+								},
+								dataType: "json",
+								data: ({
+									'number': new_num,
+									'currDepot': curr_depot,
+									'toDepot': to_depot,
+									'goodsInfo': goods,
+									'amount': sum,
+									'operatorTime': create_time,
+									'operator': operator,
+									'remark': Remark
+								}),
+								success: function(data) {
+									if(data.code == 200) {
+										if(data.data == 11) {
+											alert("超出仓库存储量，请检查仓库");
+										} else if(data.data == 12) {
+											alert("信息保存成功");
+											$('#depotHeadDlg').dialog('close');
+											$('#tableData').datagrid('reload');
+
+										} else if(data.data == 13) {
+											alert("出现异常，请重试");
+										}
+
+									}
+								},
+								error: function() {
+									alert("系统错误!");
+								}
+							});
 						}
-					},
-					error: function(){
-						alert("系统错误!");
-					}
-				});
-			}
+					});
+				}
+
+				function closeDetail() {
+					$('#depotHeadDlgShow').dialog('close');
+					$('#a1').remove();
+					$('#a2').remove();
+					$('#a3').remove();
+					$('#a4').remove();
+					$('#a5').remove();
+					$('#a6').remove();
+					$('#a7').remove();
+					$('#materialDataShow').datagrid('loadData', {
+						total: 0,
+						rows: []
+					});
+				}
+
+				function initMaterialDataShow() {
+					$('#materialDataShow').datagrid({
+						columns: [
+							[{
+									title: '商品',
+									field: 'goods',
+									width: 80,
+									align: 'center'
+								},
+								{
+									title: '数量',
+									field: 'count',
+									width: 80,
+									align: 'center'
+								},
+								{
+									title: '单位',
+									field: 'unit',
+									width: 80,
+									align: 'center'
+								}
+							]
+						]
+
+					});
+				}
 		</script>
 	</head>
 
@@ -397,17 +527,16 @@
 					<td>单据日期：</td>
 					<td>
 						<input type="text" name="searchBeginTime" id="searchBeginTime" onClick="WdatePicker({dateFmt:'yyyy-MM-dd'})" class="txt Wdate" style="width:100px;" />
-					
 					</td>
 					<td>-</td>
 					<td>
 						<input type="text" name="searchEndTime" id="searchEndTime" onClick="WdatePicker({dateFmt:'yyyy-MM-dd'})" class="txt Wdate" style="width:100px;" />
-						
+
 					</td>
 					<td>&nbsp;</td>
 					<td>
-						<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-search" id="searchBtn">查询</a>&nbsp;
-						<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-redo" id="searchResetBtn">重置</a>
+						<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-search" id="searchBtn" onclick="searchBtn()">查询</a>&nbsp;
+						<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-redo" id="searchResetBtn" onclick="searchResetBtn()">重置</a>
 					</td>
 				</tr>
 			</table>
@@ -428,16 +557,30 @@
 					<td style="padding:5px;width:130px;">
 						<span id="NumberShow"></span>
 					</td>
-					<td style="width:80px;"></td>
-					<td style="padding:5px;width:140px;"></td>
-					<td style="width:70px;"></td>
-					<td style="padding:5px;width:140px;"></td>
+					<td style="width:70px;">调拨仓库：</td>
+					<td style="padding:5px;width:130px;">
+						<span id="currdepot"></span>
+					</td>
+					<td style="width:70px;">目标仓库：</td>
+					<td style="padding:5px;width:130px;">
+						<span id="todepot"></span>
+					</td>
 					<td style="width:100px;"></td>
 				</tr>
 				<tr>
 					<td colspan="9" style="width: 1130px;">
 						<!-- 商品列表table -->
 						<table id="materialDataShow" style="top:100px;border-bottom-color:#FFFFFF"></table>
+					</td>
+				</tr>
+				<tr>
+					<td style="width:70px;">总数量：</td>
+					<td style="padding:5px;width:130px;">
+						<span id="amount"></span>
+					</td>
+					<td style="width:70px;">操作者：</td>
+					<td style="padding:5px;width:130px;">
+						<span id="opertor"></span>
 					</td>
 				</tr>
 				<tr>
@@ -449,8 +592,8 @@
 			</table>
 		</div>
 		<div id="dlg-buttons-show">
-			<a href="javascript:void(0)" id="printDepotHeadShow" class="easyui-linkbutton" iconCls="icon-ok">打印</a>
-			<a href="javascript:void(0)" id="cancelDepotHeadShow" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#depotHeadDlgShow').dialog('close')">取消</a>
+
+			<a href="javascript:void(0)" id="cancelDepotHeadShow" class="easyui-linkbutton" iconCls="icon-cancel" onclick="closeDetail()">取消</a>
 		</div>
 		<!--添加单据列表-->
 		<div id="depotHeadDlg" class="easyui-dialog" style="width:1200px;padding:10px 20px;top:60px" closed="true" buttons="#dlg-buttons" modal="true" cache="false" collapsible="false" closable="true">
@@ -463,7 +606,7 @@
 						</td>
 						<td style="width:80px;">单据编号：</td>
 						<td style="padding:5px">
-							<input  name="new_num" id="new_num" style="width:150px;" readonly/>
+							<input name="new_num" id="new_num" style="width:150px;" readonly/>
 						</td>
 						<td style="width:80px;">仓库编号：</td>
 						<td style="padding:5px">
