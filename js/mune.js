@@ -75,11 +75,11 @@ function open_return(){
 }
 
 function open_account(){
-	if($("#tt").tabs('exists', '往来账务')){
-		$("#tt").tabs('select', '往来账务');
+	if($("#tt").tabs('exists', '采购订单')){
+		$("#tt").tabs('select', '采购订单');
 	}else{
 		$("#tt").tabs('add', {
-			title: '往来账务',
+			title: '采购订单',
 			content: '<iframe src="pages/supplies/account.html" style="border: hidden;height:100%;width:100%"></iframe>',
 			closable: true
 		});

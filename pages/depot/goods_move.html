@@ -37,7 +37,7 @@
 								formatter: function(value, data) {
 									var str = '';
 									str += '<img title="编辑" src="../../easyui/themes/icons/pencil.png" style="cursor: pointer;"/>&nbsp;&nbsp;&nbsp;';
-									str += '<img title="删除" src="../../easyui/themes/icons/more.png" style="cursor: pointer;" onclick="detail(\'' + data.id + '\');"/>';
+									str += '<img title="详细" src="../../easyui/themes/icons/more.png" style="cursor: pointer;" onclick="detail(\'' + data.id + '\');"/>';
 									return str;
 								}
 							},
@@ -116,7 +116,7 @@
 			}
 
 			function detail(id) {
-				$("#depotHeadDlgShow").dialog('open');
+				$("#depotHeadDlgShow").dialog('open').dialog('setTitle', '<img src="../../easyui/themes/icons/more.png"/>&nbsp;详细');;
 				initMaterialDataShow();
 				$.ajax({
 					type: "get",
@@ -191,6 +191,20 @@
 							text: '增加',
 							iconCls: 'icon-add',
 							handler: function() {
+								var curr = $("#curr_depot").val();
+								var to = $("#to_depot").val();
+								if(curr == ""){
+									alert("请输入调拨仓库");
+									return;
+								}
+								if(to == ""){
+									alert("请输入目标仓库");
+									return;
+								}
+								if(curr == to){
+									alert("请选择不同的出入仓库");
+									return;
+								}
 								$("#addDlg").dialog('open').dialog('setTitle', '<img src="../../easyui/themes/icons/edit_add.png"/>&nbsp;增加商品信息');;
 								getGoods();
 								$("#curr_count").numberbox("setValue", 0);
@@ -211,8 +225,14 @@
 								if(row.length > 0) {
 									for(var i = 0; i < row.length; i++) {
 										var index = $('#materialData').datagrid('getRowIndex', row[i]);
-										alert(index);
 										var index = $('#materialData').datagrid('deleteRow', index);
+										var rows = $("#materialData").datagrid('getRows');
+										var sum = 0;
+										for(var i = 0; i < rows.length; i++) {
+											sum = sum + Number(rows[i].to_count);
+
+										}
+										$("#sum").numberbox('setValue', sum);
 									}
 								}
 							}
@@ -226,6 +246,8 @@
 									total: 0,
 									rows: []
 								});
+								
+								$("#sum").numberbox('setValue', 0);
 							}
 						}
 					],
@@ -391,124 +413,124 @@
 
 			function sendSava() {
 				$.messager.confirm('添加确认', '请确认填写信息', function(r) {
-						if(r) {
-							var create_time = $("#create_time").val();
-							var new_num = $("#new_num").val();
-							var curr_depot = $("#curr_depot").val();
-							var to_depot = $("#to_depot").val();
-							var sum = $("#sum").numberbox('getValue');
-							var operator = $("#operator").val();
-							var Remark = $("#Remark").val();
-							var goods = "";
-							var rows = $("#materialData").datagrid('getRows');
-							if(operator == "") {
-								alert("获取操作者失败，请重新登陆");
-								top.location.href = "login.html";
-								return;
-							}
-							if(curr_depot == "" || to_depot == "") {
-								alert("请选择仓库");
-								return;
-							}
-							if(curr_depot == to_depot) {
-								alert("请选择出入库仓库");
-								return;
-							}
-							if(rows.length == 0) {
-								alert("请添加需要调拨的商品");
-								return;
-							}
-							for(var i = 0; i < rows.length; i++) {
-								goods += rows[i].name;
-								goods += ":";
-								goods += rows[i].to_count;
-								goods += ":";
-								goods += rows[i].unit;
-								goods += ";";
-							}
-							//				alert(create_time + " " + new_num + " " +curr_depot + " " +to_depot +
-							//				" " +sum + " " +operator + " " +Remark + " " +goods);
-							$.ajax({
-								type: "get",
-								url: "http://localhost:8001/allocation-info/insert",
-								xhrFields: {
-									withCredentials: true
-								},
-								dataType: "json",
-								data: ({
-									'number': new_num,
-									'currDepot': curr_depot,
-									'toDepot': to_depot,
-									'goodsInfo': goods,
-									'amount': sum,
-									'operatorTime': create_time,
-									'operator': operator,
-									'remark': Remark
-								}),
-								success: function(data) {
-									if(data.code == 200) {
-										if(data.data == 11) {
-											alert("超出仓库存储量，请检查仓库");
-										} else if(data.data == 12) {
-											alert("信息保存成功");
-											$('#depotHeadDlg').dialog('close');
-											$('#tableData').datagrid('reload');
-
-										} else if(data.data == 13) {
-											alert("出现异常，请重试");
-										}
-
-									}
-								},
-								error: function() {
-									alert("系统错误!");
-								}
-							});
+					if(r) {
+						var create_time = $("#create_time").val();
+						var new_num = $("#new_num").val();
+						var curr_depot = $("#curr_depot").val();
+						var to_depot = $("#to_depot").val();
+						var sum = $("#sum").numberbox('getValue');
+						var operator = $("#operator").val();
+						var Remark = $("#Remark").val();
+						var goods = "";
+						var rows = $("#materialData").datagrid('getRows');
+						if(operator == "") {
+							alert("获取操作者失败，请重新登陆");
+							top.location.href = "login.html";
+							return;
 						}
-					});
-				}
+						if(curr_depot == "" || to_depot == "") {
+							alert("请选择仓库");
+							return;
+						}
+						if(curr_depot == to_depot) {
+							alert("请选择出入库仓库");
+							return;
+						}
+						if(rows.length == 0) {
+							alert("请添加需要调拨的商品");
+							return;
+						}
+						for(var i = 0; i < rows.length; i++) {
+							goods += rows[i].name;
+							goods += ":";
+							goods += rows[i].to_count;
+							goods += ":";
+							goods += rows[i].unit;
+							goods += ";";
+						}
+						//				alert(create_time + " " + new_num + " " +curr_depot + " " +to_depot +
+						//				" " +sum + " " +operator + " " +Remark + " " +goods);
+						$.ajax({
+							type: "get",
+							url: "http://localhost:8001/allocation-info/insert",
+							xhrFields: {
+								withCredentials: true
+							},
+							dataType: "json",
+							data: ({
+								'number': new_num,
+								'currDepot': curr_depot,
+								'toDepot': to_depot,
+								'goodsInfo': goods,
+								'amount': sum,
+								'operatorTime': create_time,
+								'operator': operator,
+								'remark': Remark
+							}),
+							success: function(data) {
+								if(data.code == 200) {
+									if(data.data == 11) {
+										alert("超出仓库存储量，请检查仓库");
+									} else if(data.data == 12) {
+										alert("信息保存成功");
+										$('#depotHeadDlg').dialog('close');
+										$('#tableData').datagrid('reload');
 
-				function closeDetail() {
-					$('#depotHeadDlgShow').dialog('close');
-					$('#a1').remove();
-					$('#a2').remove();
-					$('#a3').remove();
-					$('#a4').remove();
-					$('#a5').remove();
-					$('#a6').remove();
-					$('#a7').remove();
-					$('#materialDataShow').datagrid('loadData', {
-						total: 0,
-						rows: []
-					});
-				}
+									} else if(data.data == 13) {
+										alert("出现异常，请重试");
+									}
 
-				function initMaterialDataShow() {
-					$('#materialDataShow').datagrid({
-						columns: [
-							[{
-									title: '商品',
-									field: 'goods',
-									width: 80,
-									align: 'center'
-								},
-								{
-									title: '数量',
-									field: 'count',
-									width: 80,
-									align: 'center'
-								},
-								{
-									title: '单位',
-									field: 'unit',
-									width: 80,
-									align: 'center'
 								}
-							]
-						]
+							},
+							error: function() {
+								alert("系统错误!");
+							}
+						});
+					}
+				});
+			}
 
-					});
-				}
+			function closeDetail() {
+				$('#depotHeadDlgShow').dialog('close');
+				$('#a1').remove();
+				$('#a2').remove();
+				$('#a3').remove();
+				$('#a4').remove();
+				$('#a5').remove();
+				$('#a6').remove();
+				$('#a7').remove();
+				$('#materialDataShow').datagrid('loadData', {
+					total: 0,
+					rows: []
+				});
+			}
+
+			function initMaterialDataShow() {
+				$('#materialDataShow').datagrid({
+					columns: [
+						[{
+								title: '商品',
+								field: 'goods',
+								width: 80,
+								align: 'center'
+							},
+							{
+								title: '数量',
+								field: 'count',
+								width: 80,
+								align: 'center'
+							},
+							{
+								title: '单位',
+								field: 'unit',
+								width: 80,
+								align: 'center'
+							}
+						]
+					]
+
+				});
+			}
 		</script>
 	</head>
 

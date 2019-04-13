@@ -3,8 +3,194 @@
 	<head>
 		<meta charset="UTF-8">
 		<title></title>
+		<link rel="stylesheet" type="text/css" href="../../easyui/themes/default/easyui.css" />
+		<link rel="stylesheet" type="text/css" href="../../easyui/themes/icon.css">
+		<link rel="stylesheet" type="text/css" href="../../css/common.css">
+		<script type="text/javascript" src="../../easyui/jquery.min.js"></script>
+		<script type="text/javascript" src="../../easyui/jquery.easyui.min.js"></script>
+		<script type="text/javascript" src="../../js/My97DatePicker/WdatePicker.js"></script>
+		<script type="text/javascript" src="../../js/time.js"></script>
+		<script type="text/javascript" src="../../js/account.js"></script>
 	</head>
 	<body>
-		往来账务
+		<!--查询窗口-->
+		<div id="searchPanel" class="easyui-panel" style="padding:3px;" title="查询窗口" iconCls="icon-search" collapsible="true" closable="false">
+			<table id="searchTable">
+				<tr>
+					<td>单据编号：</td>
+					<td>
+						<input type="text" name="searchNumber" id="searchNumber" style="width:100px;" />
+					</td>
+					<td>商品信息：</td>
+					<td>
+						<input type="text" name="searchMaterial" id="searchMaterial" placeholder="名称，型号" style="width:100px;" />
+					</td>
+					<td>单据日期：</td>
+					<td>
+						<input type="text" name="searchBeginTime" id="searchBeginTime" onClick="WdatePicker({dateFmt:'yyyy-MM-dd'})" class="txt Wdate" style="width:100px;" />
+					</td>
+					<td>-</td>
+					<td>
+						<input type="text" name="searchEndTime" id="searchEndTime" onClick="WdatePicker({dateFmt:'yyyy-MM-dd'})" class="txt Wdate" style="width:100px;" />
+
+					</td>
+					<td>&nbsp;</td>
+					<td>
+						<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-search" id="searchBtn" onclick="searchBtn()">查询</a>&nbsp;
+						<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-redo" id="searchResetBtn" onclick="searchResetBtn()">重置</a>
+					</td>
+				</tr>
+			</table>
+		</div>
+		<!-- 数据显示table -->
+		<div id="tablePanel" class="easyui-panel" style="padding:1px;top:300px;" title="调拨出库列表" iconCls="icon-list" collapsible="true" closable="false">
+			<table id="tableData" style="top:300px;border-bottom-color:#FFFFFF"></table>
+		</div>
+		<!--单据详细-->
+		<div id="depotHeadDlgShow" class="easyui-dialog" style="width:1200px;padding:10px 20px;top:70px" closed="true" buttons="#dlg-buttons-show" modal="true" cache="false" collapsible="false" closable="true">
+			<table>
+				<tr>
+					<td style="width:60px;">单据日期：</td>
+					<td style="padding:5px;width:130px;">
+						<span id="OperTimeShow"></span>
+					</td>
+					<td style="width:70px;">单据编号：</td>
+					<td style="padding:5px;width:130px;">
+						<span id="NumberShow"></span>
+					</td>
+					<td style="width:70px;">供应商：</td>
+					<td style="padding:5px;width:130px;">
+						<span id="supplierShow"></span>
+					</td>
+					<td style="width:70px;"></td>
+					<td style="padding:5px;width:130px;"></td>
+					<td style="width:100px;"></td>
+				</tr>
+				<tr>
+					<td colspan="9" style="width: 1130px;">
+						<!-- 商品列表table -->
+						<table id="materialDataShow" style="top:100px;border-bottom-color:#FFFFFF"></table>
+					</td>
+				</tr>
+				<tr>
+					<td style="width:70px;">总金额：</td>
+					<td style="padding:5px;width:130px;">
+						<span id="amount"></span>
+					</td>
+					<td style="width:70px;">操作者：</td>
+					<td style="padding:5px;width:130px;">
+						<span id="opertor"></span>
+					</td>
+				</tr>
+				<tr>
+					<td style="width:60px;">单据备注：</td>
+					<td colspan="8" style="height:35px;">
+						<span id="RemarkShow" style="width: 1070px; height:35px;"></span>
+					</td>
+				</tr>
+			</table>
+		</div>
+		<div id="dlg-buttons-show">
+			<a href="javascript:void(0)" id="cancelDepotHeadShow" class="easyui-linkbutton" iconCls="icon-cancel" onclick="closeDetail()">取消</a>
+		</div>
+		<!--添加单据列表-->
+		<div id="depotHeadDlg" class="easyui-dialog" style="width:1200px;padding:10px 20px;top:60px" closed="true" buttons="#dlg-buttons" modal="true" cache="false" collapsible="false" closable="true">
+			<form id="depotHeadFM" method="post" novalidate>
+				<table>
+					<tr>
+						<td style="width:80px;">单据日期：</td>
+						<td style="padding:5px;width:170px;">
+							<input type="text" name="create_time" id="create_time" class="txt Wdate" style="width:140px;" readonly/>
+						</td>
+						<td style="width:80px;">单据编号：</td>
+						<td style="padding:5px">
+							<input name="new_num" id="new_num" style="width:150px;" readonly/>
+						</td>
+						<td style="width:80px;">供应商：</td>
+						<td style="padding:5px">
+							<input name="from_supplier" id="from_supplier" class="easyui-combobox" style="width:150px;" />
+						</td>
+						<td style="width:80px;"></td>
+						<td style="padding:5px">
+						</td>
+						<td style="padding:5px;width:100px;"></td>
+					</tr>
+					<tr>
+						<td colspan="9">
+							<!-- 商品列表table -->
+							<table id="materialData" style="top:100px;border-bottom-color:#FFFFFF"></table>
+						</td>
+					</tr>
+					<tr>
+						<td style="width:80px;">总金额：</td>
+						<td style="padding:5px">
+							<input name="sum" id="sum" class="easyui-numberbox" data-options="value:0" style="width:150px;" readonly/>
+						</td>
+						<td style="width:80px;">操作人：</td>
+						<td style="padding:5px">
+							<input name="operator" id="operator" style="width:150px;" readonly/>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="9">
+							<textarea name="Remark" id="Remark" rows="2" cols="2" placeholder="暂无备注信息" style="width: 1130px; height:35px;"></textarea>
+						</td>
+					</tr>
+				</table>
+			</form>
+		</div>
+		<div id="dlg-buttons">
+			<a href="javascript:void(0)" id="saveAll" class="easyui-linkbutton" iconCls="icon-ok" onclick="sendSava()">保存</a>
+			<a href="javascript:void(0)" id="cancelAll" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#depotHeadDlg').dialog('close')">取消</a>
+		</div>
+		<div id="addDlg" class="easyui-dialog" closed="true" buttons="#add-buttons" modal="true" cache="false" collapsible="false" closable="true">
+			<form id="addFM">
+				<table>
+					<tr>
+						<td>仓库编号</td>
+						<td style="padding: 5px;">
+							<input name="depot_num" id="depot_num" class="easyui-combobox" style="width: 230px; height: 20px;" />
+							<input name="id" id="id" type="hidden" />
+						</td>
+					</tr>
+					<tr>
+						<td>商品</td>
+						<td style="padding: 5px;">
+							<input name="goods_name" id="goods_name" class="easyui-combobox" style="width: 230px; height: 20px;" />
+						</td>
+					</tr>
+					<tr>
+						<td>库存</td>
+						<td style="padding: 5px;">
+							<input name="count" id="count" class="easyui-numberbox" style="width: 230px; height: 20px;" readonly />
+						</td>
+					</tr>
+					<tr>
+						<td>数量</td>
+						<td style="padding: 5px;">
+							<input name="to_count" id="to_count" class="easyui-numberbox" data-options="value:0" style="width: 230px; height: 20px;" />
+						</td>
+
+					</tr>
+					<tr>
+						<td>单价</td>
+						<td style="padding: 5px;">
+							<input name="price" id="price" class="easyui-numberbox" data-options="value:0" style="width: 230px; height: 20px;" />
+						</td>
+
+					</tr>
+					<tr>
+						<td>单位</td>
+						<td style="padding: 5px;">
+							<input name="unit" id="unit" class="easyui-validatebox" style="width: 230px; height: 20px;" readonly/>
+						</td>
+					</tr>
+				</table>
+			</form>
+		</div>
+		<div id="add-buttons">
+			<a href="javascript:void(0)" id="addGoods" class="easyui-linkbutton" iconCls="icon-ok" onclick="addGoods()">保存</a>
+			<a href="javascript:void(0)" id="cancelAddGoods" class="easyui-linkbutton" iconCls="icon-cancel" onclick="close_addFM()">取消</a>
+		</div>
 	</body>
 </html>
