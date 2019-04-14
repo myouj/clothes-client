@@ -356,6 +356,7 @@ function addGoods() {
 	var price = $("#price").val();
 	var unit = $("#unit").val();
 //	alert(depot_num + goods_name +count +to_count +price +unit);
+	
 	if(depot_num == "") {
 		alert("请选择仓库");
 		return;
@@ -366,6 +367,10 @@ function addGoods() {
 	}
 	if(to_count == 0) {
 		alert("请输入采购数量");
+		return;
+	}
+	if(price == 0){
+		alert("请输入进货价");
 		return;
 	}
 	$("#materialData").datagrid('appendRow', {
@@ -457,6 +462,7 @@ function intiGoods(){
 							$("#count").numberbox('setValue', 0);
 						}else{
 							$("#count").numberbox('setValue', data.data.count);
+//							$("#unit").val(data.data.unit);
 						}
 						
 					}
@@ -471,7 +477,7 @@ function intiGoods(){
 				xhrFields: {withCredentials:true},
 				success: function(data){
 					if(data.code == 200){
-						$("#price").numberbox('setValue', data.data.price);
+//						$("#price").numberbox('setValue', data.data.price);
 						$("#unit").val(data.data.unit);
 					}
 				}, 
