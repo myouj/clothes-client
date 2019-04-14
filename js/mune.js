@@ -51,28 +51,17 @@ function open_warning() {
 }
 
 function open_procurement(){
-	if($("#tt").tabs('exists', '采购入库')){
-		$("#tt").tabs('select', '采购入库');
+	if($("#tt").tabs('exists', '出入库')){
+		$("#tt").tabs('select', '出入库');
 	}else{
 		$("#tt").tabs('add', {
-			title: '采购入库',
+			title: '出入库',
 			content: '<iframe src="pages/supplies/procurement.html" style="border: hidden;height:100%;width:100%"></iframe>',
 			closable: true
 		});
 	}
 }
 
-function open_return(){
-	if($("#tt").tabs('exists', '采购退货')){
-		$("#tt").tabs('select', '采购退货');
-	}else{
-		$("#tt").tabs('add', {
-			title: '采购退货',
-			content: '<iframe src="pages/supplies/return.html" style="border: hidden;height:100%;width:100%"></iframe>',
-			closable: true
-		});
-	}
-}
 
 function open_account(){
 	if($("#tt").tabs('exists', '采购订单')){
