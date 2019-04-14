@@ -24,7 +24,7 @@ function initTableData() {
 					formatter: function(value, data) {
 						var str = '';
 						str += '<img title="详细" src="../../easyui/themes/icons/more.png" style="cursor: pointer;" onclick="detail(\'' + data.id + '\');"/>&nbsp;&nbsp;';
-						str += '<img title="退货" src="../../easyui/themes/icons/undo.png" style="cursor: pointer;" onclick="outdepot(\'' + data.id + "\',\'"+ data.status + '\');"/>&nbsp;&nbsp;';
+						
 						str += '<img title="入库" src="../../easyui/themes/icons/redo.png" style="cursor: pointer;" onclick="depot(\'' + data.id + "\',\'"+ data.status + '\');"/>';
 						
 						return str;
@@ -79,9 +79,6 @@ function initTableData() {
 							return str;
 						}else if(data.status == 2){
 							str += "<span style='color:#FF9933'>已入库</span>"
-							return str;
-						}else if(data.status == 3){
-							str += "<span>已退货</span>"
 							return str;
 						}
 					}
@@ -153,37 +150,10 @@ function depot(id, status){
 		});
 	}else if(status == 2){
 		alert("采购商品已经入库");
-	}else if(status == 3){
-		alert("已经退货了");
 	}
 }
 
-function outdepot(id, status){
-	if(status == 0){
-		alert("未审核，还未订货，无法退货");
-	}else if(status == 1 || status == 2){
-		var operator = localStorage.getItem("name");
-		//入库后退货
-		$.ajax({
-			type:"get",
-			url:"http://127.0.0.1:8001/purchase/outPurchase?id="+id+"&operator="+operator+"&status="+status,
-			xhrFields: {withCredentials:true},
-			success: function(data){
-				if(data.code == 200){
-					alert("退货成功");
-					$("#tableData").datagrid('reload');
-				}else{
-					alert(data.message);
-				}
-			},
-			error: function(){
-				alert("系统错误!");
-			}
-		});
-	}else if(status == 3){
-		alert("已经退货了");
-	}
-}
+
 
 function check(){
 	var row = $("#tableData").datagrid('getSelections');
@@ -195,8 +165,6 @@ function check(){
 			alert("采购已审核");
 		}else if(status == 2){
 			alert("采购已入库");
-		}else if(status == 3){
-			alert("已经退货了");
 		}else{
 			var operator = localStorage.getItem("name");
 			$.ajax({

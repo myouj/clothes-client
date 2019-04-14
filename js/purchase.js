@@ -21,7 +21,7 @@ function initTableData() {
 					formatter: function(value, data) {
 						var str = '';
 						str += '<img title="详细" src="../../easyui/themes/icons/more.png" style="cursor: pointer;" onclick="detail(\'' + data.id + '\');"/>&nbsp;&nbsp;&nbsp;';
-						
+						str += '<img title="退货" src="../../easyui/themes/icons/undo.png" style="cursor: pointer;" onclick="outdepot(\'' + data.id + '\',\'' + data.inOrOut + '\');"/>&nbsp;&nbsp;&nbsp;';
 						return str;
 					}
 				},
@@ -81,6 +81,32 @@ function initTableData() {
 		}
 
 	});
+}
+
+function outdepot(id, inOrOut){
+	if(inOrOut == 'false'){
+		alert("已退货");
+	}
+	else{
+		var operator = localStorage.getItem("name");
+		//入库后退货
+		$.ajax({
+			type:"get",
+			url:"http://127.0.0.1:8001/purchase/outPurchase?id="+id+"&operator="+operator+"&status="+status,
+			xhrFields: {withCredentials:true},
+			success: function(data){
+				if(data.code == 200){
+					alert("退货成功");
+					$("#tableData").datagrid('reload');
+				}else{
+					alert(data.message);
+				}
+			},
+			error: function(){
+				alert("系统错误!");
+			}
+		});
+	}
 }
 
 //条件查询
@@ -194,19 +220,5 @@ function closeDetail() {
 	});
 }
 
-function outdepot(id) {
-	$("#depotHeadDlg").dialog('open').dialog('setTitle', '<img src="../../easyui/themes/icons/undo.png"/>&nbsp;退货');
-	initGoodsTB();
-	$('#materialData').datagrid('loadData', {
-		total: 0,
-		rows: []
-	});
-	$("#create_time").val(today());
-	
-	getNewNum();
-	initCombox("#from_supplier");
 
-	var operator = localStorage.getItem("name");
-	$("#operator").val(operator);
-}
 

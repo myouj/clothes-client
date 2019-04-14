@@ -212,6 +212,8 @@
 							}
 							cancelGoods();
 							$('#tableData').datagrid('reload');
+						}else{
+							alert(data.message);
 						}
 					},
 					error: function() {
