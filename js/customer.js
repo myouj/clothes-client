@@ -67,7 +67,7 @@ function initTableData() {
 			]
 		],
 		toolbar: [{
-				id: 'addGoods',
+				id: 'addCustomer',
 				text: '增加',
 				iconCls: 'icon-add',
 				handler: function() {
@@ -76,7 +76,7 @@ function initTableData() {
 				}
 			},
 			{
-				id: 'deleteGoods',
+				id: 'deleteCustomer',
 				text: '删除',
 				iconCls: 'icon-remove',
 				handler: function() {
