@@ -25,7 +25,7 @@ function initTableData() {
 						var str = '';
 						str += '<img title="详细" src="../../easyui/themes/icons/more.png" style="cursor: pointer;" onclick="detail(\'' + data.id + '\');"/>&nbsp;&nbsp;';
 						str += '<img title="删除" src="../../easyui/themes/icons/edit_remove.png" style="cursor: pointer;" onclick="drop(\'' + data.id + "\',\'" + data.status + '\');"/>&nbsp;&nbsp;';
-						str += '<img title="出库" src="../../easyui/themes/icons/undo.png" style="cursor: pointer;" onclick="depot(\'' + data.id + "\',\'" + data.status + '\');"/>';
+						str += '<img title="出库" src="../../easyui/themes/icons/undo.png" style="cursor: pointer;" onclick="out(\'' + data.id + "\',\'" + data.status + '\');"/>';
 
 						return str;
 					}
