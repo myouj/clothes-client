@@ -150,35 +150,6 @@ function drop(id, status) {
 	});
 }
 
-function out(id, status) {
-	//	var status = data.status;
-	if(status == 0) {
-		alert("订货单审核后才能出库");
-	} else if(status == 1) {
-		var operator = localStorage.getItem("name");
-		$.ajax({
-			type: "get",
-			url: "http://127.0.0.1:8001/orders/out?id=" + id + "&operator=" + operator,
-			xhrFields: {
-				withCredentials: true
-			},
-			success: function(data) {
-				if(data.code == 200) {
-					alert("出库成功");
-					$("#tableData").datagrid('reload');
-				} else {
-					alert(data.message);
-				}
-			},
-			error: function() {
-				alert("系统错误!");
-			}
-		});
-	} else if(status == 2) {
-		alert("订货单已出库");
-	}
-}
-
 function checkReturn() {
 	var row = $("#tableData").datagrid('getSelections');
 	if(row.length == 0) {
