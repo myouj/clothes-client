@@ -99,18 +99,6 @@ function open_customer_return(){
 	}
 }
 
-function open_customer_account(){
-	if($("#tt").tabs('exists', '往来账务')){
-		$("#tt").tabs('select', '往来账务');
-	}else{
-		$("#tt").tabs('add', {
-			title: '往来账务',
-			content: '<iframe src="pages/business/customer_account.html" style="border: hidden;height:100%;width:100%"></iframe>',
-			closable: true
-		});
-	}
-}
-
 function open_supplier(){
 	if($("#tt").tabs('exists', '供货商管理')){
 		$("#tt").tabs('select', '供货商管理');
