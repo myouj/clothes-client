@@ -5,7 +5,7 @@ $(function() {
 //初始化表格
 function initTableData() {
 	$('#tableData').datagrid({
-		url: 'http://127.0.0.1:8001/orders/getList?do=true',
+		url: 'http://127.0.0.1:8001/orders/getList?do=false',
 		method: 'get',
 		singleSelect: true,
 		columns: [
@@ -25,8 +25,6 @@ function initTableData() {
 						var str = '';
 						str += '<img title="详细" src="../../easyui/themes/icons/more.png" style="cursor: pointer;" onclick="detail(\'' + data.id + '\');"/>&nbsp;&nbsp;';
 						str += '<img title="删除" src="../../easyui/themes/icons/edit_remove.png" style="cursor: pointer;" onclick="drop(\'' + data.id + "\',\'" + data.status + '\');"/>&nbsp;&nbsp;';
-						str += '<img title="出库" src="../../easyui/themes/icons/undo.png" style="cursor: pointer;" onclick="out(\'' + data.id + "\',\'" + data.status + '\');"/>';
-
 						return str;
 					}
 				},
@@ -59,7 +57,7 @@ function initTableData() {
 					width: 150
 				},
 				{
-					title: '订单/审核/出库',
+					title: '申请/接受',
 					field: 'operator',
 					width: 150,
 					align: 'center'
@@ -70,16 +68,13 @@ function initTableData() {
 					width: 60,
 					formatter: function(value, data) {
 						var str = "";
-						if(data.status == 0) {
-							str += "<span style='color:red'>未审核</span>"
+						if(data.status == 3) {
+							str += "<span style='color:red'>申请退货</span>"
 							return str;
-						} else if(data.status == 1) {
-							str += "<span style='color:#00CC00'>已审核</span>"
+						} else if(data.status == 4) {
+							str += "<span style='color:#00CC00'>已退货</span>"
 							return str;
-						} else if(data.status == 2) {
-							str += "<span style='color:#FF9933'>已出库</span>"
-							return str;
-						}
+						} 
 					}
 				}
 			]
@@ -105,11 +100,11 @@ function initTableData() {
 				}
 			},
 			{
-				id: 'examine',
-				text: '审核',
+				id: 'checkReturn',
+				text: '确定退货',
 				iconCls: 'icon-ok',
 				handler: function() {
-					check();
+					checkReturn();
 				}
 			}
 		],
@@ -126,11 +121,11 @@ function initTableData() {
 }
 
 function drop(id, status) {
-	$.messager.confirm('删除确认', '确定要删除该订单吗?', function(r) {
+	$.messager.confirm('删除确认', '确定要删除该退货订单吗?', function(r) {
 		if(r) {
 
-			if(status != 0) {
-				alert("订货单已经审核或者已经出库");
+			if(status == 4) {
+				alert("已经接受退货");
 				return;
 			}
 			$.ajax({
@@ -184,27 +179,25 @@ function out(id, status) {
 	}
 }
 
-function check() {
+function checkReturn() {
 	var row = $("#tableData").datagrid('getSelections');
 	if(row.length == 0) {
-		alert("请选中审核的内容");
+		alert("请选中退货的内容");
 	} else {
 		var status = row[0].status;
-		if(status == 1) {
-			alert("订货单已审核");
-		} else if(status == 2) {
-			alert("订货单已出库");
+		if(status == 4) {
+			alert("已经接受退货申请");
 		} else {
 			var operator = localStorage.getItem("name");
 			$.ajax({
 				type: "get",
-				url: "http://127.0.0.1:8001/orders/check?id=" + row[0].id + "&operator=" + operator,
+				url: "http://127.0.0.1:8001/orders/checkReturn?id=" + row[0].id + "&operator=" + operator,
 				xhrFields: {
 					withCredentials: true
 				},
 				success: function(data) {
 					if(data.code == 200) {
-						alert("审核成功");
+						alert("退货成功");
 						$("#tableData").datagrid('reload');
 					} else if(data.code == 500) {
 						alert("系统异常，请重试");
@@ -531,7 +524,7 @@ function sendSava() {
 		if(r) {
 			$.ajax({
 				type: "post",
-				url: "http://127.0.0.1:8001/orders/insert?do=true",
+				url: "http://127.0.0.1:8001/orders/insert?do=false",
 				xhrFields: {
 					withCredentials: true
 				},
