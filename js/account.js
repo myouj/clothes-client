@@ -112,6 +112,14 @@ function initTableData() {
 				handler: function() {
 					check();
 				}
+			},
+			{
+				id: 'uncheck',
+				text: '反审核',
+				iconCls: 'icon-no',
+				handler: function() {
+					uncheck();
+				}
 			}
 		],
 		pagination: true,

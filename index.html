@@ -18,18 +18,19 @@
 		<div data-options="region:'north'" style="height:100px;width: 100%;">
 			<div style="position: absolute;height: 100%;width: 100%;">
 				<div style="float: left;">
-				<span ><h1>烟雨阁服装城管理系统</h1></span>
-				
+					<span><h1>烟雨阁服装城管理系统</h1></span>
+
 				</div>
 				<div style="float: right;width: 200px;height:100px;text-align: center;line-height: 100px;">
-				<span text-align: center;>你好，<span id="head_name"></span>&nbsp&nbsp&nbsp&nbsp
-				<a href="#" onclick="logout()">退出</a></span>
+					<span text-align: center;>你好，<span id="head_name"></span>&nbsp&nbsp&nbsp&nbsp
+					<a href="#" onclick="logout()">退出</a>
+					</span>
+				</div>
 			</div>
-			</div>
-			
+
 		</div>
 		<div data-options="region:'west',title:'菜单'" style="width:200px;">
-			<div id="mune" class="easyui-accordion">
+			<!--<div id="mune" class="easyui-accordion">
 				<div title="仓库管理" data-options="iconCls:'icon-save'" style="overflow:auto;">
 					<ul id="dopet_1">
 						<p>
@@ -104,7 +105,8 @@
 						</p>
 					</ul>
 				</div>
-			</div>
+			</div>-->
+			<div id="sm"></div>
 		</div>
 		<div data-options="region:'center'" style="padding:5px;background:#eee;">
 			<div id="tt" class="easyui-tabs" style="height: 100%;width: auto;">
@@ -122,37 +124,194 @@
 	var manager_name;
 	var manager_id;
 	var isSuperRoot;
-	
-	$(function(){
+	var data;
+
+	$(function() {
+
 		getSession();
+		initMune();
+
 	});
-	
-	function getSession(){
+
+	function getSession() {
 		$.ajax({
-			type:"get",
-			url:"http://localhost:8001/manager/getSession",
-			xhrFields: {withCredentials:true},
-			success: function(data){
-				if(data.code == 4){
+			type: "get",
+			url: "http://localhost:8001/manager/getSession",
+			xhrFields: {
+				withCredentials: true
+			},
+			success: function(data) {
+				if(data.code == 4) {
 					manager_id = data.data.id;
 					manager_name = data.data.name;
 					isSuperRoot = data.data.superRoot;
 					$("#head_name").text(manager_name);
 					localStorage.setItem("name", manager_name);
 					localStorage.setItem("id", manager_id);
-				}else{
-					top.location.href="login.html";
+				} else {
+					top.location.href = "login.html";
 				}
 			}
 		});
 	}
-	
-	function logout(){
-		
+
+	function logout() {
+
 	}
-	
-	function initMune(){
-		
+
+	function initMune() {
+
 	}
-	
+
+	function initMune() {
+
+		data = [{
+			id: 1,
+			text: '仓库管理',
+			iconCls: 'icon-more',
+			state: 'close',
+			children: [{
+				id: 11,
+				text: '仓库管理'
+
+			}, {
+				id: 12,
+				text: '库存信息'
+
+			}, {
+				id: 13,
+				text: '商品调拨'
+			}]
+		}, {
+			id: 2,
+			text: '进货管理',
+			iconCls: 'icon-more',
+			children: [{
+				id: 21,
+				text: '采购订单'
+			}, {
+				id: 22,
+				text: '出入库'
+			}]
+		}, {
+			id: 3,
+			text: '业务管理',
+			iconCls: 'icon-more',
+			children: [{
+				id: 31,
+				text: '商品业务'
+			}, {
+				id: 32,
+				text: '顾客退货'
+			}]
+		}, {
+			id: 4,
+			text: '日常管理',
+			iconCls: 'icon-more',
+			children: [{
+				id: 41,
+				text: '供货商管理'
+			}, {
+				id: 42,
+				text: '顾客管理'
+			}, {
+				id: 43,
+				text: '业务员管理'
+			}, {
+				id: 44,
+				text: '客户坏账'
+			}, {
+				id: 45,
+				text: '合同管理'
+			}, {
+				id: 46,
+				text: '商品信息'
+			}]
+		}];
+
+		$("#sm").sidemenu({
+			data: data,
+			onSelect: onSideMenuSelect,
+			multiple: false,
+			border: false
+		});
+	}
+
+	function onSideMenuSelect(item) {
+		var url = getMethod(item.id);
+		if(!$('#tt').tabs('exists', item.text)) {
+			$("#tt").tabs('add', {
+				title: item.text,
+				content: '<iframe src="' + url + '" style="border: hidden;height:100%;width:100%"></iframe>',
+				closable: true
+			});
+		} else {
+			$("#tt").tabs('select', item.text);
+		}
+	}
+
+	function getMethod(id) {
+		if(id == 11) {
+			return "pages/depot/depot.html";
+		} else if(id == 12) {
+			return "pages/depot/depot_manager.html";
+		} else if(id == 13) {
+			return "pages/depot/goods_move.html";
+		} else if(id == 21) {
+			return "pages/supplies/account.html";
+		} else if(id == 22) {
+			return "pages/supplies/procurement.html";
+		} else if(id == 31) {
+			return "pages/business/goods_business.html";
+		} else if(id == 32) {
+			return "pages/business/customer_return.html";
+		} else if(id == 41) {
+			return "pages/daily/supplier.html";
+		} else if(id == 42) {
+			return "pages/daily/customer.html";
+		} else if(id == 43) {
+			return "pages/daily/salesman.html";
+		} else if(id == 44) {
+			return "pages/daily/bad_debt.html";
+		} else if(id == 45) {
+			return "pages/daily/contract.html";
+		} else if(id == 46) {
+			return "pages/daily/goods.html";
+		}
+	}
+
+	/*function initMune() {
+
+	data = [{
+		text: 'Item1',
+		iconCls: 'icon-sum',
+		state: 'open',
+		children: [{
+			text: 'Option1'
+		}, {
+			text: 'Option2'
+		}, {
+			text: 'Option3',
+			children: [{
+				text: 'Option31'
+			}, {
+				text: 'Option32'
+			}]
+		}]
+	}, {
+		text: 'Item2',
+		iconCls: 'icon-more',
+		children: [{
+			text: 'Option4'
+		}, {
+			text: 'Option5'
+		}, {
+			text: 'Option6'
+		}]
+	}];
+
+		$("#sm").sidemenu({
+			data: data
+		});
+	}*/
 </script>

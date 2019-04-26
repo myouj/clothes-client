@@ -38,17 +38,6 @@ function open_goods_move() {
 	}
 }
 
-function open_warning() {
-	if($("#tt").tabs('exists', '警报查询')) {
-		$("#tt").tabs('select', '警报查询');
-	} else {
-		$("#tt").tabs('add', {
-			title: '警报查询',
-			content: '<iframe src="pages/depot/warning.html" style="border: hidden;height:100%;width:100%"></iframe>',
-			closable: true
-		});
-	}
-}
 
 function open_procurement(){
 	if($("#tt").tabs('exists', '出入库')){
@@ -170,3 +159,5 @@ function open_goods(){
 		});
 	}
 }
+
+
