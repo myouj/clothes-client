@@ -11,14 +11,13 @@
 		<script type="text/javascript" src="easyui/jquery.easyui.min.js"></script>
 		<script type="text/javascript" src="bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
 		<script type="text/javascript" src="js/mune.js"></script>
-
 	</head>
 
 	<body class="easyui-layout">
 		<div data-options="region:'north'" style="height:100px;width: 100%;">
 			<div style="position: absolute;height: 100%;width: 100%;">
 				<div style="float: left;">
-					<span><h1>烟雨阁服装城管理系统</h1></span>
+					<span><h1>化雨阁服装城管理系统</h1></span>
 
 				</div>
 				<div style="float: right;width: 200px;height:100px;text-align: center;line-height: 100px;">
@@ -111,7 +110,7 @@
 		<div data-options="region:'center'" style="padding:5px;background:#eee;">
 			<div id="tt" class="easyui-tabs" style="height: 100%;width: auto;">
 				<div title="欢迎" data-options="closable:true" style="padding:20px;display:none;">
-					欢迎来到烟雨阁服装城管理系统
+					欢迎来到化雨阁服装城管理系统
 				</div>
 
 			</div>
@@ -172,14 +171,10 @@
 			state: 'close',
 			children: [{
 				id: 11,
-				text: '仓库管理'
-
-			}, {
-				id: 12,
 				text: '库存信息'
 
 			}, {
-				id: 13,
+				id: 12,
 				text: '商品调拨'
 			}]
 		}, {
@@ -210,22 +205,23 @@
 			iconCls: 'icon-more',
 			children: [{
 				id: 41,
-				text: '供货商管理'
+				text: '仓库管理'
+
 			}, {
 				id: 42,
-				text: '顾客管理'
+				text: '供货商管理'
 			}, {
 				id: 43,
-				text: '业务员管理'
+				text: '顾客管理'
 			}, {
 				id: 44,
-				text: '客户坏账'
+				text: '业务员管理'
 			}, {
 				id: 45,
-				text: '合同管理'
+				text: '商品信息管理'
 			}, {
 				id: 46,
-				text: '商品信息'
+				text: '财务信息'
 			}]
 		}];
 
@@ -252,10 +248,8 @@
 
 	function getMethod(id) {
 		if(id == 11) {
-			return "pages/depot/depot.html";
-		} else if(id == 12) {
 			return "pages/depot/depot_manager.html";
-		} else if(id == 13) {
+		} else if(id == 12) {
 			return "pages/depot/goods_move.html";
 		} else if(id == 21) {
 			return "pages/supplies/account.html";
@@ -266,17 +260,17 @@
 		} else if(id == 32) {
 			return "pages/business/customer_return.html";
 		} else if(id == 41) {
-			return "pages/daily/supplier.html";
+			return "pages/daily/depot.html";
 		} else if(id == 42) {
-			return "pages/daily/customer.html";
+			return "pages/daily/supplier.html";
 		} else if(id == 43) {
-			return "pages/daily/salesman.html";
+			return "pages/daily/customer.html";
 		} else if(id == 44) {
-			return "pages/daily/bad_debt.html";
+			return "pages/daily/salesman.html";
 		} else if(id == 45) {
-			return "pages/daily/contract.html";
-		} else if(id == 46) {
 			return "pages/daily/goods.html";
+		} else if(id == 46) {
+			return "pages/daily/finance.html";
 		}
 	}
 
