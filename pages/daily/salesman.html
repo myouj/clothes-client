@@ -3,9 +3,84 @@
 	<head>
 		<meta charset="UTF-8">
 		<title></title>
+		<link rel="stylesheet" type="text/css" href="../../easyui/themes/default/easyui.css" />
+		<link rel="stylesheet" type="text/css" href="../../easyui/themes/icon.css">
+		<link rel="stylesheet" type="text/css" href="../../css/common.css">
+		<script type="text/javascript" src="../../easyui/jquery.min.js"></script>
+		<script type="text/javascript" src="../../easyui/jquery.easyui.min.js"></script>
+		<script type="text/javascript" src="../../js/saleman.js"></script>
 	</head>
 	<body>
-		员工管理
+		<div id="searchPanel" class="easyui-panel" style="padding: 10px;" title="查询窗口" iconCls="icon-search" collapsible="true" closable="false">
+			<table id="searchTable">
+				<tr>
+					<td>名字：</td>
+					<td>
+						<input type="text" name="sea_name" id="sea_name" style="width: 100px;" />
+					</td>
+					<td>&nbsp;</td>
+					<td>部门：</td>
+					<td>
+						<select type="text" name="sea_depart" id="sea_depart" style="width: 100px;" class="easyui-combobox" >
+							<option value="全部">全部</option>
+							<option value="销售部">销售部</option>
+    						<option value="采购部">采购部</option>
+    						<option value="管理部">管理部</option>
+						</select>
+					</td>
+					<td>
+						<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-search" id="searchBtn" onclick="search_manager()">查询</a>
+						<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-redo" id="resetBtn" onclick="reset()">重置</a>
+					</td>
+				</tr>
+			</table>
+		</div>
+
+		<div id="tablePanel" class="easyui-panel" style="padding: 1px;top: 300px;" title="业务员列表" iconCls="icon-list" collapsible="true" closable="false">
+			<table id="tableData" style="top: 300px;border-bottom-color: #FFFFFF;"></table>
+		</div>
+
+		<div id="managerDlg" class="easyui-dialog" style="width: 380px;padding: 10px 20px;" closed="true" buttons="#dlg-buttons" modal="true" cache="false" collapsible="false" closable="false">
+			<form id="managerFM" method="post" novalidate="novalidate">
+				<table>
+					<tr>
+						<td>姓名</td>
+						<td style="padding: 5px;">
+							<input name="name" id="name" style="width: 230px; height: 20px;" />
+							<input name="id" id="id" type="hidden" />
+						</td>
+					</tr>
+					<tr>
+						<td>账号</td>
+						<td style="padding: 5px;">
+							<input name="username" id="username" style="width: 230px; height: 20px;" />
+
+						</td>
+					</tr>
+					<tr>
+						<td>电话号码</td>
+						<td style="padding: 5px;">
+							<input name="telephone" id="telephone" style="width: 230px; height: 20px;" />
+
+						</td>
+					</tr>
+					<tr>
+						<td>部门</td>
+						<td style="padding: 5px;">
+							<select class="easyui-combobox" name="department" id="department"  style="width: 230px;">
+								<option value="销售部">销售部</option>
+								<option value="采购部">采购部</option>
+								<option value="管理部">管理部</option>
+							</select>
+						</td>
+					</tr>
+				</table>
+			</form>
+		</div>
+		<div id="dlg-buttons">
+			<a href="javascript:void(0)" id="saveManager" class="easyui-linkbutton" iconCls="icon-ok" onclick="saveManager()">保存</a>
+			<a href="javascript:void(0)" id="cancelManager" class="easyui-linkbutton" iconCls="icon-cancel" onclick="cancelManager()">取消</a>
+		</div>
 		
 	</body>
 </html>

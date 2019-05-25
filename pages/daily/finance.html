@@ -1,10 +1,42 @@
 <!DOCTYPE html>
 <html>
+
 	<head>
 		<meta charset="UTF-8">
 		<title></title>
+		<link rel="stylesheet" type="text/css" href="../../easyui/themes/default/easyui.css" />
+		<link rel="stylesheet" type="text/css" href="../../easyui/themes/icon.css">
+		<link rel="stylesheet" type="text/css" href="../../css/common.css">
+		<script type="text/javascript" src="../../easyui/jquery.min.js"></script>
+		<script type="text/javascript" src="../../easyui/jquery.easyui.min.js"></script>
+		<script type="text/javascript" src="../../js/finance.js"></script>
 	</head>
+
 	<body>
-		财务信息
+		<div id="searchPanel" class="easyui-panel" style="padding: 10px;" title="查询窗口" iconCls="icon-search" collapsible="true" closable="false">
+			<table id="searchTable">
+				<tr>
+					<td>类型：</td>
+					<td>
+						<select type="text" class="easyui-combobox" name="type" id="type" style="width: 100px;">
+							<option value="全部">全部</option>
+							<option value="采购退货">采购退货</option>
+							<option value="采购订货">采购订货</option>
+							<option value="订单出库">订单出库</option>
+							<option value="订单退货">订单退货</option>
+						</select>
+					</td>
+					<td>
+						<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-search" id="searchBtn" onclick="search_1()">查询</a>
+						<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-redo" id="resetBtn" onclick="reset()">重置</a>
+					</td>
+				</tr>
+			</table>
+		</div>
+
+		<div id="tablePanel" class="easyui-panel" style="padding: 1px;top: 300px;" title="财务列表" iconCls="icon-list" collapsible="true" closable="false">
+			<table id="tableData" style="top: 300px;border-bottom-color: #FFFFFF;"></table>
+		</div>
 	</body>
+
 </html>
