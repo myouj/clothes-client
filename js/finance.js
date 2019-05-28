@@ -17,14 +17,14 @@ function initTableData() {
 				{
 					title: '收入/支出',
 					field: 'inOrOut',
-					width: 150,
+					width: 80,
 					formatter: function(value, data) {
 						var str = "";
 						if(data.inOrOut == true) {
-							str += "<span style='color:black'>收入</span>"
+							str += "<span style='color:black'>收入</span>";
 							return str;
 						} else {
-							str += "<span style='color:#00CC00'>支出</span>"
+							str += "<span style='color:#00CC00'>支出</span>";
 							return str;
 						} 
 					}
@@ -42,7 +42,7 @@ function initTableData() {
 				{
 					title: '时间',
 					field: 'time',
-					width: 80
+					width: 150
 				}
 			]
 		],

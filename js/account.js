@@ -34,7 +34,7 @@ function initTableData() {
 				{
 					title: '供应商',
 					field: 'supplier',
-					width: 80,
+					width: 120,
 					align: 'center'
 				},
 				{
@@ -137,20 +137,20 @@ function initTableData() {
 function uncheck() {
 	var row = $("#tableData").datagrid('getSelections');
 	if(row.length == 0) {
-		alert("请选中反审核的内容");
+		$.messager.alert('提示', '请选中反审核的内容');
 	} else {
 		console.log(row[0]);
 		var status = row[0].status;
 		if(status == 0) {
-			alert("订单还未审核");
+			$.messager.alert('提示', '订单还未审核');
 		} else if(status == 2) {
-			alert("采购已入库");
+			$.messager.alert('提示', '采购已入库');
 		}else {
 			$.messager.confirm('反审核', '确定要反审核该订单吗?', function(r) {
 				if(r) {
 
 					if(status != 1) {
-						alert("已审核且未入库才能进行反审核");
+						$.messager.alert('提示', '已审核且未入库才能进行反审核');
 						return;
 					}
 					$.ajax({
@@ -161,21 +161,20 @@ function uncheck() {
 						},
 						success: function(data) {
 							if(data.code == 200) {
-								alert("反审核成功");
+								$.messager.alert('提示', '反审核成功');
 								$("#tableData").datagrid('reload');
 							} else if(data.code == 500) {
-								alert("系统异常，请重试");
+								$.messager.alert('提示', '系统异常，请重试');
 							}
 						},
 						error: function() {
-							alert("系统错误!");
+							$.messager.alert('提示', '系统错误');
 						}
 					});
 				}
 			});
 
 		}
-		//		alert(row[0].status);
 	}
 
 }
@@ -185,7 +184,7 @@ function drop(id, status) {
 		if(r) {
 
 			if(status != 0) {
-				alert("订单已经审核或者已经入库");
+				$.messager.alert('提示', '订单已经审核或者已经入库');
 				return;
 			}
 			$.ajax({
@@ -196,14 +195,14 @@ function drop(id, status) {
 				},
 				success: function(data) {
 					if(data.code == 200) {
-						alert("删除成功成功");
+						$.messager.alert('提示', '删除成功成功');
 						$("#tableData").datagrid('reload');
 					} else {
-						alert("删除失败，请稍后再试");
+						$.messager.alert('提示', '删除失败，请稍后再试');
 					}
 				},
 				error: function() {
-					alert("系统错误!");
+					$.messager.alert('提示', '系统错误');
 				}
 			});
 		}
@@ -213,7 +212,7 @@ function drop(id, status) {
 function depot(id, status) {
 	//	var status = data.status;
 	if(status == 0) {
-		alert("采购信息通过审核后才能入库");
+		$.messager.alert('提示', '采购信息通过审核后才能入库');
 	} else if(status == 1) {
 		var operator = localStorage.getItem("name");
 		$.ajax({
@@ -224,31 +223,31 @@ function depot(id, status) {
 			},
 			success: function(data) {
 				if(data.code == 200) {
-					alert("入库成功");
+					$.messager.alert('提示', '入库成功');
 					$("#tableData").datagrid('reload');
 				} else {
-					alert(data.message);
+					$.messager.alert('提示', data.message);
 				}
 			},
 			error: function() {
-				alert("系统错误!");
+				$.messager.alert('提示', '系统错误');
 			}
 		});
 	} else if(status == 2) {
-		alert("采购商品已经入库");
+		$.messager.alert('提示', '采购商品已经入库');
 	}
 }
 
 function check() {
 	var row = $("#tableData").datagrid('getSelections');
 	if(row.length == 0) {
-		alert("请选中审核的内容");
+		$.messager.alert('提示', '请选中审核的内容');
 	} else {
 		var status = row[0].status;
 		if(status == 1) {
-			alert("采购已审核");
+			$.messager.alert('提示', '采购已审核');
 		} else if(status == 2) {
-			alert("采购已入库");
+			$.messager.alert('提示', '采购已入库');
 		} else {
 			var operator = localStorage.getItem("name");
 			$.ajax({
@@ -259,18 +258,17 @@ function check() {
 				},
 				success: function(data) {
 					if(data.code == 200) {
-						alert("审核成功");
+						$.messager.alert('提示', '审核成功');
 						$("#tableData").datagrid('reload');
 					} else if(data.code == 500) {
-						alert("系统异常，请重试");
+						$.messager.alert('提示', '系统异常，请重试');
 					}
 				},
 				error: function() {
-					alert("系统错误!");
+					$.messager.alert('提示', '系统错误');
 				}
 			});
 		}
-		//		alert(row[0].status);
 	}
 }
 
@@ -285,7 +283,6 @@ function detail(id) {
 		},
 		success: function(data) {
 			if(data.code == 200) {
-				//							$("#OperTimeShow").val(data.data.operatorTime);
 				$("#OperTimeShow").append('<span id="a1">' + data.data.all.operateTime + '</span>');
 				$("#NumberShow").append('<span id="a2">' + data.data.all.num + '</span>');
 				$("#supplierShow").append('<span id="a3">' + data.data.all.supplier + '</span>');
@@ -304,11 +301,11 @@ function detail(id) {
 				});
 
 			} else {
-				alert("请求错误，请重新操作");
+				$.messager.alert('提示', '请求错误，请重新操作');
 			}
 		},
 		error: function() {
-			alert("系统错误");
+			$.messager.alert('提示', '系统错误');
 		}
 	});
 }
@@ -366,13 +363,12 @@ function initGoodsTB() {
 				handler: function() {
 					var row = $('#materialData').datagrid('getChecked');
 					if(row.length == 0) {
-						alert("请选择");
+						$.messager.alert('提示', '请选择');
 						return;
 					}
 					if(row.length > 0) {
 						for(var i = 0; i < row.length; i++) {
 							var index = $('#materialData').datagrid('getRowIndex', row[i]);
-							//							alert(index);
 							var index = $('#materialData').datagrid('deleteRow', index);
 						}
 					}
@@ -441,22 +437,21 @@ function addGoods() {
 	var to_count = $("#to_count").val();
 	var price = $("#price").val();
 	var unit = $("#unit").val();
-	//	alert(depot_num + goods_name +count +to_count +price +unit);
 
 	if(depot_num == "") {
-		alert("请选择仓库");
+		$.messager.alert('提示', '请选择仓库');
 		return;
 	}
 	if(goods_name == "") {
-		alert("请选择商品");
+		$.messager.alert('提示', '请选择商品');
 		return;
 	}
 	if(to_count == 0) {
-		alert("请输入采购数量");
+		$.messager.alert('提示', '请输入采购数量');
 		return;
 	}
 	if(price == 0) {
-		alert("请输入进货价");
+		$.messager.alert('提示', '请输入进货价');
 		return;
 	}
 	$("#materialData").datagrid('appendRow', {
@@ -502,11 +497,11 @@ function getNewNum() {
 			if(data.code == 200) {
 				$("#new_num").val(data.data);
 			} else {
-				alert("获取新单号失败!");
+				$.messager.alert('提示', '获取新单号失败');
 			}
 		},
 		error: function() {
-			alert("系统错误!");
+			$.messager.alert('提示', '系统错误');
 		}
 	});
 
@@ -552,13 +547,12 @@ function intiGoods() {
 							$("#count").numberbox('setValue', 0);
 						} else {
 							$("#count").numberbox('setValue', data.data.count);
-							//							$("#unit").val(data.data.unit);
 						}
 
 					}
 				},
 				error: function() {
-					alert("系统错误！");
+					$.messager.alert('提示', '系统错误');
 				}
 			});
 			$.ajax({
@@ -569,12 +563,11 @@ function intiGoods() {
 				},
 				success: function(data) {
 					if(data.code == 200) {
-						//						$("#price").numberbox('setValue', data.data.price);
 						$("#unit").val(data.data.unit);
 					}
 				},
 				error: function() {
-					alert("系统错误！");
+					$.messager.alert('提示', '系统错误');
 				}
 			});
 		}
@@ -590,20 +583,19 @@ function sendSava() {
 			var sum = $("#sum").numberbox('getValue');
 			var operator = $("#operator").val();
 			var Remark = $("#Remark").val();
-			//			alert(create_time + new_num+from_supplier + sum+ operator+ Remark);
 			var goods = "";
 			var rows = $("#materialData").datagrid('getRows');
 			if(operator == "") {
-				alert("获取操作者失败，请重新登陆");
+				$.messager.alert('提示', '获取操作者失败，请重新登陆');
 				top.location.href = "login.html";
 				return;
 			}
 			if(from_supplier == "") {
-				alert("请选择供应商");
+				$.messager.alert('提示', '请选择供应商');
 				return;
 			}
 			if(rows.length == 0) {
-				alert("请添加需要采购的商品");
+				$.messager.alert('提示', '请添加需要采购的商品');
 				return;
 			}
 			for(var i = 0; i < rows.length; i++) {
@@ -618,9 +610,6 @@ function sendSava() {
 				goods += rows[i].unit;
 				goods += ";";
 			}
-			//				alert(create_time + " " + new_num + " " +curr_depot + " " +to_depot +
-			//				" " +sum + " " +operator + " " +Remark + " " +goods);
-			//			alert(goods);
 			$.ajax({
 				type: "post",
 				url: "http://localhost:8001/purchase/savePurchase",
@@ -639,13 +628,13 @@ function sendSava() {
 				}),
 				success: function(data) {
 					if(data.code == 200) {
-						alert("保存成功");
+						$.messager.alert('提示', '保存成功');
 						$('#depotHeadDlg').dialog('close');
 						$("#tableData").datagrid('reload');
 					}
 				},
 				error: function() {
-					alert("系统错误!");
+					$.messager.alert('提示', '系统错误');
 				}
 			});
 		}
@@ -678,7 +667,7 @@ function initMaterialDataShow() {
 				{
 					title: '商品',
 					field: 'goods',
-					width: 80,
+					width: 150,
 					align: 'center'
 				},
 				{

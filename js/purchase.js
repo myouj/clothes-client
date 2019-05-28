@@ -33,7 +33,7 @@ function initTableData() {
 				{
 					title: '商品信息',
 					field: 'goodsInfo',
-					width: 70
+					width: 200
 				},
 				{
 					title: '数量',
@@ -85,7 +85,7 @@ function initTableData() {
 
 function outdepot(id, inOrOut){
 	if(inOrOut == 'false'){
-		alert("已退货");
+		$.messager.alert('提示', '已退货');
 	}
 	else{
 		var operator = localStorage.getItem("name");
@@ -96,14 +96,14 @@ function outdepot(id, inOrOut){
 			xhrFields: {withCredentials:true},
 			success: function(data){
 				if(data.code == 200){
-					alert("退货成功");
+					$.messager.alert('提示', '退货成功');
 					$("#tableData").datagrid('reload');
 				}else{
 					alert(data.message);
 				}
 			},
 			error: function(){
-				alert("系统错误!");
+				$.messager.alert('提示', '系统错误');
 			}
 		});
 	}
@@ -137,7 +137,6 @@ function detail(id) {
 		},
 		success: function(data) {
 			if(data.code == 200) {
-				//							$("#OperTimeShow").val(data.data.operatorTime);
 				$("#OperTimeShow").append('<span id="a1">' + data.data.all.operatorTime + '</span>');
 				$("#NumberShow").append('<span id="a2">' + data.data.all.document + '</span>');
 				$("#supplierShow").append('<span id="a3">' + data.data.all.customer + '</span>');
@@ -157,11 +156,11 @@ function detail(id) {
 				});
 
 			} else {
-				alert("请求错误，请重新操作");
+				$.messager.alert('提示', '请求错误，请重新操作');
 			}
 		},
 		error: function() {
-			alert("系统错误");
+			$.messager.alert('提示', '系统错误');
 		}
 	});
 }
@@ -178,7 +177,7 @@ function initMaterialDataShow() {
 				{
 					title: '商品',
 					field: 'goods',
-					width: 80,
+					width: 150,
 					align: 'center'
 				},
 				{

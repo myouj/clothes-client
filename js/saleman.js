@@ -45,12 +45,12 @@ function initTableData() {
 				{
 					title: '账号',
 					field: 'username',
-					width: 300
+					width: 150
 				},
 				{
 					title: '电话',
 					field: 'telephone',
-					width: 300
+					width: 100
 				},
 				{
 					title: '部门',
@@ -106,13 +106,13 @@ function resetPassword(id){
 				}),
 				success: function(data) {
 					if(data.code == 200) {
-						alert("重置成功");
+						$.messager.alert('提示', '重置成功');
 					} else {
-						alert("删除失败，请稍后再试");
+						$.messager.alert('提示', '删除失败，请稍后再试');
 					}
 				},
 				error: function() {
-					alert("请求删除失败");
+					$.messager.alert('提示', '系统错误');
 				}
 			});
 		}
@@ -140,13 +140,12 @@ function getManager(id) {
 				$('#username').val(res.username);
 				$('#telephone').val(res.telephone);
 				$('#department').combobox('select', res.department);
-				//							alert(res);
 			} else {
-				alert("获取信息失败");
+				$.messager.alert('提示', '获取信息失败');
 			}
 		},
 		error: function() {
-			alert("获取信息失败");
+			$.messager.alert('提示', '系统错误');
 		}
 	});
 }
@@ -159,17 +158,17 @@ function saveManager() {
 	var id = $('#id').val();
 	
 	if(name == ""){
-		alert("名字不能为空");
+		$.messager.alert('提示', '名字不能为空');
 		return;
 	}
 	
 	if(username == ""){
-		alert("账号不能为空");
+		$.messager.alert('提示', '账号不能为空');
 		return;
 	}
 	
 	if(telephone == ""){
-		alert("电话号码不能为空");
+		$.messager.alert('提示', '电话号码不能为空');
 		return;
 	}
 
@@ -190,17 +189,17 @@ function saveManager() {
 		success: function(data) {
 			if(data.code == 200) {
 				if(data.data == 3) {
-					alert("保存成功");
+					$.messager.alert('提示', '保存成功');
 				}
 				if(data.data == 2) {
-					alert("修改成功");
+					$.messager.alert('提示', '修改成功');
 				}
 				cancelManager();
 				$('#tableData').datagrid('reload');
 			}
 		},
 		error: function() {
-			alert("请求服务器错误");
+			$.messager.alert('提示', '系统错误');
 		}
 	});
 
@@ -221,14 +220,14 @@ function deleteManager(id) {
 				}),
 				success: function(data) {
 					if(data.code == 200) {
-						alert("删除成功");
+						$.messager.alert('提示', '删除成功');
 						$('#tableData').datagrid('reload');
 					} else {
-						alert("删除失败，请稍后再试");
+						$.messager.alert('提示', '删除失败，请稍后再试');
 					}
 				},
 				error: function() {
-					alert("请求删除失败");
+					$.messager.alert('提示', '系统错误');
 				}
 			});
 		}

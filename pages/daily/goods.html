@@ -94,7 +94,7 @@
 							handler: function() {
 								var row = $('#tableData').datagrid('getChecked');
 								if(row.length == 0) {
-									alert("请选择");
+									$.messager.alert('提示', '请选择');
 									return;
 								}
 								if(row.length > 0) {
@@ -117,14 +117,14 @@
 												}),
 												success: function(data) {
 													if(data.code == 200) {
-														alert("删除成功！");
+														$.messager.alert('提示', '删除成功');
 														$('#tableData').datagrid('reload');
 													} else {
-														alert("删除失败，请稍后再试！");
+														$.messager.alert('提示', '删除失败，请稍后再试');
 													}
 												},
 												error: function() {
-													alert("请求错误，删除失败！");
+													$.messager.alert('提示', '系统错误');
 												}
 											});
 										}
@@ -167,14 +167,13 @@
 							$('#unit').val(res.unit);
 							$('#remark').val(res.remark);
 							$('#number').val(res.number);
-							//							alert(res);
 
 						} else {
-							alert("获取信息失败");
+							$.messager.alert('提示', '系统异常');
 						}
 					},
 					error: function() {
-						alert("获取信息失败");
+						$.messager.alert('提示', '系统错误');
 					}
 				});
 			}
@@ -205,19 +204,19 @@
 					success: function(data) {
 						if(data.code == 200) {
 							if(data.data == 3) {
-								alert("保存成功");
+								$.messager.alert('提示', '保存成功');
 							}
 							if(data.data == 2) {
-								alert("修改成功");
+								$.messager.alert('提示', '修改成功');
 							}
 							cancelGoods();
 							$('#tableData').datagrid('reload');
 						}else{
-							alert(data.message);
+							$.messager.alert('提示', '系统异常，请稍后再试');
 						}
 					},
 					error: function() {
-						alert("请求服务器错误");
+						$.messager.alert('提示', '系统错误');
 					}
 				});
 
@@ -238,14 +237,14 @@
 							}),
 							success: function(data) {
 								if(data.code == 200) {
-									alert("删除成功");
+									$.messager.alert('提示', '删除成功');
 									$('#tableData').datagrid('reload');
 								} else {
-									alert("删除失败，请稍后再试");
+									$.messager.alert('提示', '删除失败，请稍后再试');
 								}
 							},
 							error: function() {
-								alert("请求删除失败");
+								$.messager.alert('提示', '系统错误');
 							}
 						});
 					}
@@ -313,7 +312,7 @@
 			</table>
 		</div>
 
-		<div id="tablePanel" class="easyui-panel" style="padding: 1px;top: 300px;" title="仓库列表" iconCls="icon-list" collapsible="true" closable="false">
+		<div id="tablePanel" class="easyui-panel" style="padding: 1px;top: 300px;" title="商品列表" iconCls="icon-list" collapsible="true" closable="false">
 			<table id="tableData" style="top: 300px;border-bottom-color: #FFFFFF;"></table>
 		</div>
 

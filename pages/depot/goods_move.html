@@ -36,8 +36,8 @@
 								width: 60,
 								formatter: function(value, data) {
 									var str = '';
-									str += '<img title="编辑" src="../../easyui/themes/icons/pencil.png" style="cursor: pointer;"/>&nbsp;&nbsp;&nbsp;';
-									str += '<img title="详细" src="../../easyui/themes/icons/more.png" style="cursor: pointer;" onclick="detail(\'' + data.id + '\');"/>';
+//									str += '<img title="编辑" src="../../easyui/themes/icons/pencil.png" style="cursor: pointer;"/>&nbsp;&nbsp;&nbsp;';
+									str += '&nbsp;&nbsp;<img title="详细" src="../../easyui/themes/icons/more.png" style="cursor: pointer;" onclick="detail(\'' + data.id + '\');"/>';
 									return str;
 								}
 							},
@@ -77,7 +77,7 @@
 								align: 'center'
 							},
 							{
-								title: '详细',
+								title: '备注',
 								field: 'remark',
 								width: 200
 							}
@@ -126,7 +126,6 @@
 					},
 					success: function(data) {
 						if(data.code == 200) {
-							//							$("#OperTimeShow").val(data.data.operatorTime);
 							$("#OperTimeShow").append('<span id="a1">' + data.data.all.operatorTime + '</span>');
 							$("#NumberShow").append('<span id="a2">' + data.data.all.number + '</span>');
 							$("#currdepot").append('<span id="a3">' + data.data.all.currDepot + '</span>');
@@ -144,11 +143,11 @@
 							});
 
 						} else {
-							alert("请求错误，请重新操作");
+							$.messager.alert('提示', '系统异常');
 						}
 					},
 					error: function() {
-						alert("系统错误");
+						$.messager.alert('提示', '系统错误');
 					}
 				});
 			}
@@ -194,15 +193,15 @@
 								var curr = $("#curr_depot").val();
 								var to = $("#to_depot").val();
 								if(curr == ""){
-									alert("请输入调拨仓库");
+									$.messager.alert('提示', '请选择调拨仓库');
 									return;
 								}
 								if(to == ""){
-									alert("请输入目标仓库");
+									$.messager.alert('提示', '请选择目标仓库');
 									return;
 								}
 								if(curr == to){
-									alert("请选择不同的出入仓库");
+									$.messager.alert('提示', '请选择不同的仓库');
 									return;
 								}
 								$("#addDlg").dialog('open').dialog('setTitle', '<img src="../../easyui/themes/icons/edit_add.png"/>&nbsp;增加商品信息');;
@@ -219,7 +218,7 @@
 							handler: function() {
 								var row = $('#materialData').datagrid('getChecked');
 								if(row.length == 0) {
-									alert("请选择");
+									$.messager.alert('提示', '请选择');
 									return;
 								}
 								if(row.length > 0) {
@@ -261,7 +260,7 @@
 							{
 								title: '商品',
 								field: 'name',
-								width: 230
+								width: 300
 							},
 							{
 								title: '调拨数量',
@@ -289,15 +288,15 @@
 				var curr_count = $("#curr_count").val();
 				//				alert(to_count + " " + curr_count);
 				if(Number(to_count) > Number(curr_count)) {
-					alert("调拨数量不能超过仓库库存数量");
+					$.messager.alert('提示', '调拨数量不能超过仓库库存数量');
 					return;
 				}
 				if(name == "") {
-					alert("请选择商品");
+					$.messager.alert('提示', '请选择商品');
 					return;
 				}
 				if(to_count == 0) {
-					alert("请输入调拨的数量");
+					$.messager.alert('提示', '请输入调拨的数量');
 					return;
 				}
 				$("#materialData").datagrid('appendRow', {
@@ -336,11 +335,11 @@
 						if(data.code == 200) {
 							$("#new_num").val(data.data);
 						} else {
-							alert("获取新单号失败!");
+							$.messager.alert('提示', '获取新单号失败!');
 						}
 					},
 					error: function() {
-						alert("系统错误!");
+						$.messager.alert('提示', '系统错误');
 					}
 				});
 
@@ -374,7 +373,6 @@
 					success: function(data) {
 						if(data.code == 200) {
 							if(we == 1) {
-								//								$("#curr_count").val(data.data.count);
 								$("#curr_count").numberbox("setValue", data.data.count);
 								$("#unit").val(data.data.unit);
 							}
@@ -384,12 +382,11 @@
 								} else {
 									$("#tar_count").numberbox("setValue", data.data.count);
 								}
-
 							}
 						}
 					},
 					error: function() {
-						alert("系统错误!");
+						$.messager.alert('提示', '系统错误');
 					}
 				});
 			}
@@ -407,7 +404,6 @@
 						});
 						$("#sum").numberbox('setValue', 0);
 					}
-
 				});
 			}
 
@@ -424,20 +420,20 @@
 						var goods = "";
 						var rows = $("#materialData").datagrid('getRows');
 						if(operator == "") {
-							alert("获取操作者失败，请重新登陆");
+							$.messager.alert('提示', '获取操作者失败，请重新登陆');
 							top.location.href = "login.html";
 							return;
 						}
 						if(curr_depot == "" || to_depot == "") {
-							alert("请选择仓库");
+							$.messager.alert('提示', '请选择仓库');
 							return;
 						}
 						if(curr_depot == to_depot) {
-							alert("请选择出入库仓库");
+							$.messager.alert('提示', '请选择目标仓库');
 							return;
 						}
 						if(rows.length == 0) {
-							alert("请添加需要调拨的商品");
+							$.messager.alert('提示', '请添加需要调拨的商品');
 							return;
 						}
 						for(var i = 0; i < rows.length; i++) {
@@ -448,8 +444,6 @@
 							goods += rows[i].unit;
 							goods += ";";
 						}
-						//				alert(create_time + " " + new_num + " " +curr_depot + " " +to_depot +
-						//				" " +sum + " " +operator + " " +Remark + " " +goods);
 						$.ajax({
 							type: "get",
 							url: "http://localhost:8001/allocation-info/insert",
@@ -470,20 +464,20 @@
 							success: function(data) {
 								if(data.code == 200) {
 									if(data.data == 11) {
-										alert("超出仓库存储量，请检查仓库");
+										$.messager.alert('提示', '超出仓库存储量，请检查仓库');
 									} else if(data.data == 12) {
-										alert("信息保存成功");
+										$.messager.alert('提示', '信息保存成功');
 										$('#depotHeadDlg').dialog('close');
 										$('#tableData').datagrid('reload');
 
 									} else if(data.data == 13) {
-										alert("出现异常，请重试");
+										$.messager.alert('提示', '系统出现异常，请重试');
 									}
 
 								}
 							},
 							error: function() {
-								alert("系统错误!");
+								$.messager.alert('提示', '系统错误');
 							}
 						});
 					}
@@ -511,7 +505,7 @@
 						[{
 								title: '商品',
 								field: 'goods',
-								width: 80,
+								width: 300,
 								align: 'center'
 							},
 							{
@@ -568,7 +562,7 @@
 			<table id="tableData" style="top:300px;border-bottom-color:#FFFFFF"></table>
 		</div>
 		<!--单据详细-->
-		<div id="depotHeadDlgShow" class="easyui-dialog" style="width:1200px;padding:10px 20px;top:70px" closed="true" buttons="#dlg-buttons-show" modal="true" cache="false" collapsible="false" closable="false">
+		<div id="depotHeadDlgShow" class="easyui-dialog" style="width:auto;padding:10px 20px;top:70px" closed="true" buttons="#dlg-buttons-show" modal="true" cache="false" collapsible="false" closable="false">
 			<table>
 				<tr>
 					<td style="width:60px;">单据日期：</td>
@@ -618,7 +612,7 @@
 			<a href="javascript:void(0)" id="cancelDepotHeadShow" class="easyui-linkbutton" iconCls="icon-cancel" onclick="closeDetail()">取消</a>
 		</div>
 		<!--添加单据列表-->
-		<div id="depotHeadDlg" class="easyui-dialog" style="width:1200px;padding:10px 20px;top:60px" closed="true" buttons="#dlg-buttons" modal="true" cache="false" collapsible="false" closable="false">
+		<div id="depotHeadDlg" class="easyui-dialog" style="width:95%;padding:10px 20px;top:60px" closed="true" buttons="#dlg-buttons" modal="true" cache="false" collapsible="false" closable="false">
 			<form id="depotHeadFM" method="post" novalidate>
 				<table>
 					<tr>

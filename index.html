@@ -3,7 +3,7 @@
 
 	<head>
 		<meta charset="utf-8" />
-		<title>烟雨阁服装城</title>
+		<title>化雨阁服装城</title>
 		<link rel="stylesheet" type="text/css" href="easyui/themes/default/easyui.css" />
 		<link rel="stylesheet" type="text/css" href="easyui/themes/icon.css">
 		<link rel="stylesheet" type="text/css" href="bootstrap-3.3.7-dist/css/bootstrap-theme.min.css" />
@@ -16,13 +16,16 @@
 	<body class="easyui-layout">
 		<div data-options="region:'north'" style="height:100px;width: 100%;">
 			<div style="position: absolute;height: 100%;width: 100%;">
+				<!--<div class="page-header">
+  <h1>Example page header <small>Subtext for header</small></h1>
+</div>-->
 				<div style="float: left;">
-					<span><h1>化雨阁服装城管理系统</h1></span>
+					<h1>化雨阁服装城管理系统</h1>
 
 				</div>
-				<div style="float: right;width: 200px;height:100px;text-align: center;line-height: 100px;">
-					<span text-align: center;>你好，<span id="head_name"></span>&nbsp&nbsp&nbsp&nbsp
-					<a href="#" onclick="">修改密码</a>&nbsp&nbsp&nbsp&nbsp
+				<div style="float: right;width: 250px;height:100px;text-align: center;line-height: 100px;">
+					<span text-align: center;>你好，<span id="head_name"></span>&nbsp;&nbsp;&nbsp;&nbsp;
+					<a href="#" onclick="pass_FM()">修改密码</a>&nbsp;&nbsp;&nbsp;&nbsp;
 					<a href="#" onclick="logout()">退出</a>
 					</span>
 				</div>
@@ -30,82 +33,6 @@
 
 		</div>
 		<div data-options="region:'west',title:'菜单'" style="width:200px;">
-			<!--<div id="mune" class="easyui-accordion">
-				<div title="仓库管理" data-options="iconCls:'icon-save'" style="overflow:auto;">
-					<ul id="dopet_1">
-						<p>
-							<a href="#" onclick="open_depot()">仓库管理</a>
-						</p>
-					</ul>
-					<ul id="dopet_2">
-						<p>
-							<a href="#" onclick="open_depot_manger()">库存信息</a>
-						</p>
-					</ul>
-					<ul id="dopet_3">
-						<p>
-							<a href="#" onclick="open_goods_move()">商品调拨</a>
-						</p>
-					</ul>
-				</div>
-				<div title="进货管理" data-options="iconCls:'icon-reload'">
-					<ul id="supplies_1">
-						<p>
-							<a href="#" onclick="open_account()">采购订单</a>
-						</p>
-					</ul>
-					<ul id="supplies_2">
-						<p>
-							<a href="#" onclick="open_procurement()">出入库</a>
-						</p>
-					</ul>
-				
-				</div>
-				<div title="业务管理" data-options="iconCls:'icon-man'">
-					<ul id="business_1">
-						<p>
-							<a href="#" onclick="open_goods_business()">商品业务</a>
-						</p>
-					</ul>
-					<ul id="business_2">
-						<p>
-							<a href="#" onclick="open_customer_return()">顾客退货</a>
-						</p>
-					</ul>
-				</div>
-				<div title="日常管理" data-options="iconCls:'icon-blank'">
-					<ul id="daily_1">
-						<p>
-							<a href="#" onclick="open_supplier()">供货商管理</a>
-						</p>
-					</ul>
-					<ul id="daily_2">
-						<p>
-							<a href="#" onclick="open_customer()">顾客管理</a>
-						</p>
-					</ul>
-					<ul id="daily_3">
-						<p>
-							<a href="#" onclick="open_salesman()">业务员管理</a>
-						</p>
-					</ul>
-					<ul id="daily_4">
-						<p>
-							<a href="#" onclick="open_bad_debt()">客户坏账</a>
-						</p>
-					</ul>
-					<ul id="daily_5">
-						<p>
-							<a href="#" onclick="open_contract()">合同管理</a>
-						</p>
-					</ul>
-					<ul id="daily_6">
-						<p>
-							<a href="#" onclick="open_goods()">商品信息</a>
-						</p>
-					</ul>
-				</div>
-			</div>-->
 			<div id="sm"></div>
 		</div>
 		<div data-options="region:'center'" style="padding:5px;background:#eee;">
@@ -116,20 +43,41 @@
 
 			</div>
 		</div>
+		<div id="passDlag" class="easyui-dialog" title="修改密码" buttons="#re-buttons" style="width:300;height:100;" closed="true" closable="false" data-options="iconCls:'icon-save',resizable:true,modal:true">
+			<form id="addFM">
+				<table>
+					<tr>
+						<td>新密码</td>
+						<td style="padding: 5px;">
+							<input type="password" name="new_pass" id="new_pass" class="easyui-validatebox" />
+						</td>
+					</tr>
+					<tr>
+						<td>确认密码</td>
+						<td style="padding: 5px;">
+							<input type="password" name="re_pass" id="re_pass" class="easyui-validatebox" />
+						</td>
+					</tr>
+
+				</table>
+			</form>
+		</div>
+		<div id="re-buttons">
+			<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-ok" onclick="set_pass()">保存</a>
+			<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="close_FM()">取消</a>
+		</div>
 
 	</body>
 
 </html>
 <script>
-	var manager_name;
-	var manager_id;
-	var isSuperRoot;
+	var username;
+	var type;
 	var data;
 
 	$(function() {
 
 		getSession();
-		initMune();
 
 	});
 
@@ -142,28 +90,117 @@
 			},
 			success: function(data) {
 				if(data.code == 4) {
-					manager_id = data.data.id;
-					manager_name = data.data.name;
-					isSuperRoot = data.data.superRoot;
-					$("#head_name").text(manager_name);
-					localStorage.setItem("name", manager_name);
-					localStorage.setItem("id", manager_id);
+					username = data.data.username;
+					type = data.data.department;
+					initMune();
+					$("#head_name").text(data.data.name);
+					localStorage.setItem("name", data.data.name);
 				} else {
 					top.location.href = "login.html";
 				}
+			},
+			error: function(){
+				$.messager.alert('提示', '系统错误');
+				document.location = 'login.html';
 			}
 		});
 	}
 
 	function logout() {
-
+		$.messager.confirm('退出确认', '确定要退出系统?', function(r) {
+			if(r) {
+				$.ajax({
+					type: "get",
+					url: "http://127.0.0.1:8001/manager/logout",
+					xhrFields: {
+						withCredentials: true
+					},
+					success: function(data) {
+						if(data.code == 200) {
+							$.messager.alert('提示', '退出成功');
+							localStorage.clear();
+							document.location = 'login.html';
+						}
+					},
+					error: function() {
+						$.messager.alert('提示', '系统错误');
+					}
+				});
+			}
+		});
 	}
 
 	function initMune() {
+		if(type === '管理部') {
+			initGM();
+		} else if(type === '销售部') {
+			initSM();
+		} else if(type === '采购部') {
+			initPM();
+		}
 
+		$("#sm").sidemenu({
+			data: data,
+			onSelect: onSideMenuSelect,
+			multiple: false,
+			border: false
+		});
 	}
 
-	function initMune() {
+	function initPM() {
+		data = [{
+			id: 1,
+			text: '仓库管理',
+			iconCls: 'icon-more',
+			state: 'close',
+			children: [{
+				id: 11,
+				text: '库存信息'
+
+			}, {
+				id: 12,
+				text: '库存调拨'
+			}]
+		}, {
+			id: 2,
+			text: '进货管理',
+			iconCls: 'icon-more',
+			children: [{
+				id: 21,
+				text: '采购订单'
+			}, {
+				id: 22,
+				text: '出入库'
+			}]
+		}];
+	}
+
+	function initSM() {
+		data = [{
+			id: 1,
+			text: '仓库管理',
+			iconCls: 'icon-more',
+			state: 'close',
+			children: [{
+				id: 11,
+				text: '库存信息'
+
+			}]
+		}, {
+			id: 3,
+			text: '业务管理',
+			iconCls: 'icon-more',
+			children: [{
+				id: 31,
+				text: '商品销售'
+			}, {
+				id: 32,
+				text: '顾客退货'
+			}]
+		}];
+	}
+
+	function initGM() {
 
 		data = [{
 			id: 1,
@@ -176,7 +213,7 @@
 
 			}, {
 				id: 12,
-				text: '商品调拨'
+				text: '库存调拨'
 			}]
 		}, {
 			id: 2,
@@ -195,7 +232,7 @@
 			iconCls: 'icon-more',
 			children: [{
 				id: 31,
-				text: '商品业务'
+				text: '商品销售'
 			}, {
 				id: 32,
 				text: '顾客退货'
@@ -225,13 +262,6 @@
 				text: '财务信息'
 			}]
 		}];
-
-		$("#sm").sidemenu({
-			data: data,
-			onSelect: onSideMenuSelect,
-			multiple: false,
-			border: false
-		});
 	}
 
 	function onSideMenuSelect(item) {
@@ -275,38 +305,56 @@
 		}
 	}
 
-	/*function initMune() {
+	function pass_FM() {
+		$("#passDlag").dialog('open');
+	}
 
-	data = [{
-		text: 'Item1',
-		iconCls: 'icon-sum',
-		state: 'open',
-		children: [{
-			text: 'Option1'
-		}, {
-			text: 'Option2'
-		}, {
-			text: 'Option3',
-			children: [{
-				text: 'Option31'
-			}, {
-				text: 'Option32'
-			}]
-		}]
-	}, {
-		text: 'Item2',
-		iconCls: 'icon-more',
-		children: [{
-			text: 'Option4'
-		}, {
-			text: 'Option5'
-		}, {
-			text: 'Option6'
-		}]
-	}];
+	function close_FM() {
+		$("#passDlag").dialog('close');
+		$("#new_pass").val("");
+		$("#re_pass").val("");
+	}
 
-		$("#sm").sidemenu({
-			data: data
+	function set_pass() {
+		var n_pass = $("#new_pass").val();
+		var r_pass = $("#re_pass").val();
+		var reg = /^[0-9a-zA-z_]{6,16}$/;
+
+		if(n_pass === '') {
+			$.messager.alert('提示', '新密码不能为空');
+		}
+
+		if(!reg.test(n_pass)) {
+			$.messager.alert('提示', '密码必须是6-16位的数字和英文字符');
+		}
+
+		if(n_pass !== r_pass) {
+			$.messager.alert('提示', '两次密码不一致');
+		}
+
+		$.ajax({
+			type: "get",
+			url: "http://127.0.0.1:8001/manager/updatePassword",
+			data: {
+				'username': username,
+				'newPassword': n_pass
+			},
+			dataType: 'json',
+			xhrFields: {
+				withCredentials: true
+			},
+			success: function(data) {
+				if(data.code === 200) {
+					$.messager.alert('提示', '密码修改成功');
+					close_FM();
+				} else {
+					$.messager.alert('提示', '密码修改失败');
+				}
+
+			},
+			error: function() {
+				$.messager.alert('提示', '系统错误');
+			}
 		});
-	}*/
+	}
 </script>
