@@ -16,9 +16,6 @@
 	<body class="easyui-layout">
 		<div data-options="region:'north'" style="height:100px;width: 100%;">
 			<div style="position: absolute;height: 100%;width: 100%;">
-				<!--<div class="page-header">
-  <h1>Example page header <small>Subtext for header</small></h1>
-</div>-->
 				<div style="float: left;">
 					<h1>化雨阁服装城管理系统</h1>
 
@@ -322,14 +319,17 @@
 
 		if(n_pass === '') {
 			$.messager.alert('提示', '新密码不能为空');
+			return;
 		}
 
 		if(!reg.test(n_pass)) {
 			$.messager.alert('提示', '密码必须是6-16位的数字和英文字符');
+			return;
 		}
 
 		if(n_pass !== r_pass) {
 			$.messager.alert('提示', '两次密码不一致');
+			return;
 		}
 
 		$.ajax({
